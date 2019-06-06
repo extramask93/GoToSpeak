@@ -1,0 +1,33 @@
+[
+    {
+      "Username": "West",
+      "Email": "westvasquez@pearlesex.com",
+      "Password": "password",
+      "PhotoUrl": "https://randomuser.me/api/portraits/men/9.jpg"
+    },
+    {
+      "Username": "Shields",
+      "Email": "shieldsvasquez@pearlesex.com",
+      "Password": "password",
+      "PhotoUrl":  "https://randomuser.me/api/portraits/men/98.jpg"
+    },
+    {
+      "Username": "Velazquez",
+      "Email": "velazquezvasquez@pearlesex.com",
+      "Password": "password",
+      "PhotoUrl": "https://randomuser.me/api/portraits/men/14.jpg"
+    },
+    {
+      "Username": "Simmons",
+      "Email": "simmonsvasquez@pearlesex.com",
+      "Password": "password",
+      "PhotoUrl": "https://randomuser.me/api/portraits/men/54.jpg"
+    },
+    {
+      "Username": "Yates",
+      "Email": "yatesvasquez@pearlesex.com",
+      "Password": "password",
+      "PhotoUrl": "https://randomuser.me/api/portraits/men/18.jpg"
+
+    }
+  ]

@@ -11,5 +11,11 @@ namespace GoToSpeak.Models
         public string UserName { get; set; }
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
+        public DateTime LastActive { get;set; }
+        public string Email { get; set; }
+        public string PhotoUrl { get; set; }
+        public ICollection<Message> MessagesSent { get; set; }
+        public ICollection<Message> MessagesReceived { get; set; }
+        
     }
 }

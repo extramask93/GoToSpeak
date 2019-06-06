@@ -16,6 +16,8 @@ import { ContactsComponent } from './contacts/contacts.component';
 import { RouterModule } from '@angular/router';
 import { appRoutes } from './routes';
 import { AuthGuard } from './_guards/auth.guard';
+import { ChatService } from './_services/chat.service';
+import { MemberListComponent } from './memberList/memberList.component';
 @NgModule({
    declarations: [
       AppComponent,
@@ -23,7 +25,8 @@ import { AuthGuard } from './_guards/auth.guard';
       HomeComponent,
       RegisterComponent,
       MessagesComponent,
-      ContactsComponent
+      ContactsComponent,
+      MemberListComponent
    ],
    imports: [
       BrowserModule,
@@ -36,6 +39,7 @@ import { AuthGuard } from './_guards/auth.guard';
    providers: [
       AuthService,
       AlertifyService,
+      ChatService,
       ErrorInterceptorProvider,
       AuthGuard
    ],
