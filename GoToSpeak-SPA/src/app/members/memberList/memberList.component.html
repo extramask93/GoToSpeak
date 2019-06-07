@@ -1,0 +1,10 @@
+<div class="container row">
+  <div class="col-sm">
+    <div *ngFor="let user of users" >
+      <app-member-card class="" [user]="user" (userSelectedEvent)="handleChange($event)"></app-member-card>
+    </div>
+  </div>
+  <div class="col-sm">
+      <app-member-messages [recipientId]="this.recipientId"></app-member-messages>
+  </div>
+</div>

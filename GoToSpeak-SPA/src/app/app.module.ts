@@ -17,7 +17,17 @@ import { RouterModule } from '@angular/router';
 import { appRoutes } from './routes';
 import { AuthGuard } from './_guards/auth.guard';
 import { ChatService } from './_services/chat.service';
-import { MemberListComponent } from './memberList/memberList.component';
+import { MemberListComponent } from './members/memberList/memberList.component';
+import { MemberCardComponent } from './members/member-card/member-card.component';
+import { JwtModule } from '@auth0/angular-jwt';
+import { MemberListResolver } from './_resolvers/member-list.resolver';
+import { MessagesResolver } from './_resolvers/messages.resolver.';
+import { MemberMessagesComponent } from './members/member-messages/member-messages.component';
+
+export function tokenGetter() {
+   return localStorage.getItem('token');
+}
+
 @NgModule({
    declarations: [
       AppComponent,
@@ -26,13 +36,23 @@ import { MemberListComponent } from './memberList/memberList.component';
       RegisterComponent,
       MessagesComponent,
       ContactsComponent,
-      MemberListComponent
+      MemberListComponent,
+      MemberCardComponent,
+      MemberMessagesComponent
    ],
    imports: [
       BrowserModule,
       AppRoutingModule,
       HttpClientModule,
       FormsModule,
+      JwtModule.forRoot({
+         config: {
+            // tslint:disable-next-line:object-literal-shorthand
+            tokenGetter: tokenGetter,
+            whitelistedDomains: ['localhost:5000'],
+            blacklistedRoutes: ['localhost:5000/api/auth']
+         }
+      }),
       BsDropdownModule.forRoot(),
       RouterModule.forRoot(appRoutes)
    ],
@@ -41,7 +61,9 @@ import { MemberListComponent } from './memberList/memberList.component';
       AlertifyService,
       ChatService,
       ErrorInterceptorProvider,
-      AuthGuard
+      AuthGuard,
+      MemberListResolver,
+      MessagesResolver
    ],
    bootstrap: [
       AppComponent

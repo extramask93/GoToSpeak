@@ -7,11 +7,6 @@ import { PaginatedResult } from '../_models/pagination';
 import { Observable } from 'rxjs';
 import { User } from '../_models/user';
 
-const httpOptions = {
-  headers: new HttpHeaders({
-    'Authorization': 'Bearer ' + localStorage.getItem('token')
-  })
-};
 
 @Injectable({
   providedIn: 'root'
@@ -20,17 +15,16 @@ export class ChatService {
 baseUrl = environment.apiUrl;
 constructor(private http: HttpClient) { }
 getUsers(): Observable<User[]> {
-  return this.http.get<User[]>(this.baseUrl + 'users', httpOptions);
+  return this.http.get<User[]>(this.baseUrl + 'user');
 }
-getUser(id): Observable<User>
-{
-  return this.http.get<User>(this.baseUrl + 'users/' + id, httpOptions);
+getUser(id): Observable<User> {
+  return this.http.get<User>(this.baseUrl + 'user/' + id);
 }
 getMessages(id: number, page?, itemsPerPage?, messageContainer?) {
   const paginatedResult: PaginatedResult<Message[]> = new PaginatedResult<Message[]>();
   let params = new HttpParams();
   params = params.append('MessageContainer', messageContainer);
-  if(page != null && itemsPerPage != null) {
+  if (page != null && itemsPerPage != null) {
     params = params.append('pageNumber', page);
     params = params.append('pageSize', itemsPerPage);
   }
@@ -45,5 +39,17 @@ getMessages(id: number, page?, itemsPerPage?, messageContainer?) {
     })
   );
 }
+getMessageThread(id: number, recipientId: number) {
+  return this.http.get<Message[]>(this.baseUrl + 'users/' + id + '/messages/thread/' + recipientId);
+}
+sendMessage(id: number, message: Message) {
+  return this.http.post(this.baseUrl + 'users/' + id + '/messages', message);
+}
+deleteMessage(id: number, userId: number) {
+  return this.http.post(this.baseUrl+ 'users/'+ userId + '/messages/'+ id, {});
+}
+markAsRead(userId: number, messageId: number) {
+  this.http.post(this.baseUrl + 'users/' + userId + '/messagess/' + messageId + '/read',{}).subscribe();
 
+}
 }
