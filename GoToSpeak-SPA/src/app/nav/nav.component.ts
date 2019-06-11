@@ -23,14 +23,14 @@ export class NavComponent implements OnInit {
     error => {
       this.alertify.error('error');
     },
-    () => {this.router.navigate(['/messages']);}
+    () => {this.router.navigate(['/messages']); }
     );
     console.log(this.authService.decodedToken.unique_name);
   }
   loggedIn() {
     return this.authService.loggedIn();
   }
-  logOut(){
+  logOut() {
     localStorage.removeItem('token');
     this.alertify.message('logged out');
     this.router.navigate(['/home']);

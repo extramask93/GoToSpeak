@@ -9,6 +9,7 @@ using GoToSpeak.Helpers;
 using GoToSpeak.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace GoToSpeak.Controllers
 {
@@ -19,11 +20,14 @@ namespace GoToSpeak.Controllers
     {
         private readonly IChatRepository _repo;
         private readonly IMapper _mapper;
+        private readonly IHubContext<MessageHub> _hub;
 
-        public MessagesController(IChatRepository repo, IMapper mapper)
+        public MessagesController(IChatRepository repo, IMapper mapper,
+                                IHubContext<MessageHub> hub)
         {
             _repo = repo;
             _mapper = mapper;
+            _hub = hub;
         }
         [HttpGet("{id}", Name = "GetMessage")]
         public async Task<IActionResult> GetMessage(int userId, int id)

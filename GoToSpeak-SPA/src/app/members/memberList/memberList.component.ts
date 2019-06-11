@@ -26,7 +26,6 @@ export class MemberListComponent implements OnInit {
      {this.users = users; console.log(users); }, error => {this.alertify.error(error); });
   }
   handleChange(recipientId: number) {
-    console.log(recipientId);
     this.recipientId = recipientId;
   }
 }

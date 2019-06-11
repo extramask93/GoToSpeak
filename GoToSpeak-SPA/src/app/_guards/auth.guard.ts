@@ -13,7 +13,7 @@ export class AuthGuard implements CanActivate {
     if (this.authService.loggedIn()) {
       return true;
     }
-    this.alertify.error('Members are only!');
+    this.alertify.error('Members area only!');
     this.router.navigate(['/home']);
     return false;
   }

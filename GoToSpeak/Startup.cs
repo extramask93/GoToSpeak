@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using GoToSpeak.Controllers;
 using GoToSpeak.Data;
 using GoToSpeak.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -30,7 +31,6 @@ namespace GoToSpeak
         {
             Configuration = configuration;
         }
-
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -45,6 +45,7 @@ namespace GoToSpeak
             services.AddTransient<Seed>();
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IChatRepository, ChatRepository>();
+            services.AddSignalR();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options => {
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -53,6 +54,26 @@ namespace GoToSpeak
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
                     ValidateIssuer = false,
                     ValidateAudience = false
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        var authToken = context.Request.Headers["Authorization"].ToString();
+
+                        var token = !string.IsNullOrEmpty(accessToken) ? accessToken.ToString() : !string.IsNullOrEmpty(authToken) ?  authToken.Substring(7) : String.Empty;
+
+                        var path = context.HttpContext.Request.Path;
+
+                        // If the request is for our hub...
+                        if (!string.IsNullOrEmpty(token) && path.StartsWithSegments("/temp"))
+                        {
+                            // Read the token out of the query string
+                            context.Token = token;
+                        }
+                        return Task.CompletedTask;
+                    }                    
                 };
             });
         }
@@ -82,9 +103,16 @@ namespace GoToSpeak
 
             //app.UseHttpsRedirection();
             //seed.SeedUsers();
-            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            //app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            app.UseCors(builder =>
+                        builder.WithOrigins("http://localhost:4200")
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials());
             app.UseAuthentication();
+            app.UseSignalR(routes =>{routes.MapHub<MessageHub>("/temp");});
             app.UseMvc();
+            
         }
     }
 }

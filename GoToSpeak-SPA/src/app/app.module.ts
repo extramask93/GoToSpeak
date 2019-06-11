@@ -23,6 +23,8 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { MemberListResolver } from './_resolvers/member-list.resolver';
 import { MessagesResolver } from './_resolvers/messages.resolver.';
 import { MemberMessagesComponent } from './members/member-messages/member-messages.component';
+import { TempComponent } from './temp/temp.component';
+import { SignalRService } from './_services/signalR.service';
 
 export function tokenGetter() {
    return localStorage.getItem('token');
@@ -38,7 +40,8 @@ export function tokenGetter() {
       ContactsComponent,
       MemberListComponent,
       MemberCardComponent,
-      MemberMessagesComponent
+      MemberMessagesComponent,
+      TempComponent
    ],
    imports: [
       BrowserModule,
@@ -50,7 +53,7 @@ export function tokenGetter() {
             // tslint:disable-next-line:object-literal-shorthand
             tokenGetter: tokenGetter,
             whitelistedDomains: ['localhost:5000'],
-            blacklistedRoutes: ['localhost:5000/api/auth']
+            blacklistedRoutes: ['localhost:5000/api/auth', 'localhost:5000/temp']
          }
       }),
       BsDropdownModule.forRoot(),
@@ -63,6 +66,7 @@ export function tokenGetter() {
       ErrorInterceptorProvider,
       AuthGuard,
       MemberListResolver,
+      SignalRService,
       MessagesResolver
    ],
    bootstrap: [
