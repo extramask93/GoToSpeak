@@ -3,4 +3,5 @@ export interface User {
     username: string;
     lastActive: Date;
     photoUrl: string;
+    isNewMessage: boolean;
 }

@@ -6,6 +6,9 @@
         <h5 class="card-title">{{user.userName}}</h5>
     </div>
     <div class="col-sm">
+        <h5 class="card-title">{{user.isNewMessage}}</h5>
+    </div>
+    <div class="col-sm">
         <a (click)="this.userSelectedEvent.emit(user.id)" class="btn btn-primary"><i class="fa fa-comments"></i></a>
     </div>
   </div>

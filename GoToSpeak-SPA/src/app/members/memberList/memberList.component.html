@@ -1,5 +1,5 @@
 <div class="container row">
-  <div class="col-sm">
+  <div class="col-sm scrollable">
     <div *ngFor="let user of users" >
       <app-member-card class="" [user]="user" (userSelectedEvent)="handleChange($event)"></app-member-card>
     </div>

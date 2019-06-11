@@ -54,7 +54,7 @@ namespace GoToSpeak.Data
         {
             var messages = await _context.Messages.Include(u => u.Sender).Include(u => u.Recipient)
             .Where(m => m.RecipientId == userId && m.RecipientDeleted == false && m.SenderId == recipientId || m.RecipientId == recipientId && m.SenderId == userId && m.SenderDeleted==false)
-             .OrderByDescending(m => m.MessageSent).ToListAsync();
+             .OrderBy(m => m.MessageSent).ToListAsync();
              return messages;
         }
 

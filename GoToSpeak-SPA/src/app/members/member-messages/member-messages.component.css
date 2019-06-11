@@ -17,5 +17,9 @@
 }
 .card-body {
     overflow-y: scroll;
-     height: 400px;
+    height: 80vh;
+    width: 100%;
+}
+.card {
+    width: 100%;
 }

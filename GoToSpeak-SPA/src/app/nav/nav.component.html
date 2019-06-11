@@ -5,16 +5,10 @@
     <a class="navbar-brand" routerLinkActive="active" [routerLink]="[ '/home' ]">GoToSpeak</a>
     <ul *ngIf="loggedIn()" class="navbar-nav mr-auto">
       <li class="nav-item" routerLinkActive="active">
-        <a class="nav-link" [routerLink]="[ '/contacts' ]">Contacts</a>
+        <a class="nav-link" [routerLink]="[ '/users' ]">Users</a>
       </li>
       <li class="nav-item" routerLinkActive="active">
-        <a class="nav-link" [routerLink]="[ '/messages' ]">Chat</a>
-      </li>
-      <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link" [routerLink]="[ '/members' ]">Members</a>
-        </li>
-      <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link" [routerLink]="[ '/temp' ]">Temp</a>
+          <a class="nav-link" [routerLink]="[ '/members' ]">Chat</a>
       </li>
     </ul>
     <div *ngIf="loggedIn()" class="dropdown" dropdown>

@@ -5,6 +5,7 @@ import { AuthService } from 'src/app/_services/auth.service';
 import { AlertifyService } from 'src/app/_services/alertify.service';
 import { User } from 'src/app/_models/user';
 import { tap } from 'rxjs/operators';
+import { SignalRService } from 'src/app/_services/signalR.service';
 
 @Component({
   selector: 'app-member-messages',
@@ -12,48 +13,39 @@ import { tap } from 'rxjs/operators';
   styleUrls: ['./member-messages.component.css']
 })
 export class MemberMessagesComponent implements OnInit {
+  connected = false;
   _recipientId: number;
+  userId: number;
   newMessage: any = {};
   @Input()
   public set recipientId(val: number) {
     this._recipientId = val;
-    this.loadMessages();
+    if (this.connected) {
+      this.signalRService.loadHistory(val);
+    }
   }
   messages: Message[];
   user: User;
-  constructor(private chatService: ChatService, private authSerive: AuthService, private alertify: AlertifyService) { }
-
-  ngOnInit() {
-    this.loadMessages();
-  }
-
-  loadMessages() {
-    const currentUserId = +this.authSerive.decodedToken.nameid;
-    this.chatService.getMessageThread(this.authSerive.decodedToken.nameid, this._recipientId)
-    .pipe(
-      tap(messages => {
-        for (let i = 0; i < messages.length; i++) {
-          if (messages[i].isRead === false && messages[i].recipientId === currentUserId) {
-            this.chatService.markAsRead(currentUserId, messages[i].id);
-          }
-        }
-      })
-    )
-    .subscribe(messages => {
-      this.messages = messages;
-    }, error => {
-      this.alertify.error(error);
-    });
-  }
+  constructor(private chatService: ChatService, private authSerive: AuthService, private alertify: AlertifyService,
+              private signalRService: SignalRService) {
+                this.userId = this.authSerive.decodedToken.nameid;
+                this.signalRService.connectionEstablished.subscribe((b: boolean) => {
+                  this.connected = b; this.signalRService.loadHistory(this.userId); });
+                this.signalRService.historyReceived.subscribe(messages => {
+                  console.log(messages);
+                  this.messages = messages;
+                }, error => {
+                  this.alertify.error(error);
+                });
+                this.signalRService.messageReceived.subscribe((message: Message) => {
+                  this.messages.push(message);
+                });
+               }
+  ngOnInit() {}
   sendMessage() {
     this.newMessage.recipientId = this._recipientId;
-    this.chatService.sendMessage(this.authSerive.decodedToken.nameid, this.newMessage).subscribe(
-      (message: Message) => {
-        this.messages.unshift(message);
-        this.newMessage.content = '';
-      }, error => {
-        this.alertify.error(error);
-      }
-    );
+    this.signalRService.sendMessage(this.newMessage);
+    console.log(this.newMessage);
+    this.newMessage.content = '';
   }
 }

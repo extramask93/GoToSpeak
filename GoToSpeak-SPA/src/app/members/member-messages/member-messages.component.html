@@ -1,13 +1,16 @@
+<div>
+  <p>Chating with: {{this._recipientId}}</p>
+</div>
 <div class="card">
-  <div class="card-body">
+  <div class="card-body"  #scrollMe [scrollTop]="scrollMe.scrollHeight">
     <div *ngIf="messages?.length === 0">
       <p>No messages yet</p>
     </div>
     <div class="chat">
       <li *ngFor="let message of messages">
         <!-- to them-->
-        <div *ngIf="message.senderId == recipientId">
-          <span class="chat-img float-letf">
+        <div *ngIf="message.senderId != this.userId">
+          <span class="chat-img float-left">
             <img src ="{{message.senderPhotoUrl}}" alt="{{message.senderUsername}}" class="rounded-circle">
           </span>
           <div class="chat-body">
@@ -21,7 +24,7 @@
           </div>
         </div>  
         <!-- to me-->
-        <div *ngIf="message.senderId != recipientId">
+        <div *ngIf="message.senderId == this.userId">
             <span class="chat-img float-right">
               <img src ="{{message.senderPhotoUrl}}" alt="{{message.senderUsername}}" class="rounded-circle">
             </span>

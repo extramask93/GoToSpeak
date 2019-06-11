@@ -1,40 +1,75 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import * as signalR from '@aspnet/signalr';
+import { Message } from '../_models/message';
+import { User } from '../_models/user';
 @Injectable({
   providedIn: 'root'
 })
 export class SignalRService {
-public data: any;
-private newMessage: any = {};
-private hubConnection: signalR.HubConnection;
- public startConnection = () => {
+  messageReceived = new EventEmitter<Message>();
+  historyReceived = new EventEmitter<Message[]>();
+  usersReceived = new EventEmitter<User[]>();
+  userJoined = new EventEmitter<User[]>();
+  userLeft = new EventEmitter<User[]>();
+  // tslint:disable-next-line:ban-types
+  connectionEstablished = new EventEmitter<boolean>();
+  public data: any;
+  private newMessage: any = {};
+  private connectionIsEstablished = false;
+  private hubConnection: signalR.HubConnection;
+
+  constructor() {
+    this.createConnection();
+    this.registerOnServerEvents();
+    this.startConnection();
+  }
+  private createConnection() {
     this.hubConnection = new signalR.HubConnectionBuilder()
-                            .withUrl('http://localhost:5000/temp', {
-                              accessTokenFactory: () => {
-                                  return localStorage.getItem('token');
-                              }
-                            })
-                            .build();
+    .withUrl('http://localhost:5000/temp', {
+      accessTokenFactory: () => {
+          return localStorage.getItem('token');
+      }
+    })
+    .build();
+  }
+  private registerOnServerEvents(): void {
+    this.hubConnection.on('NewMessage', (data: any) => {
+      this.messageReceived.emit(data);
+    });
+    this.hubConnection.on('ActiveUsers', (data: any) => {
+      this.usersReceived.emit(data);
+    });
+    this.hubConnection.on('MessageHistory', (data: any) => {
+      this.historyReceived.emit(data);
+    });
+    this.hubConnection.on('UserLeft', (data: any) => {
+      this.userLeft.emit(data);
+    });
+    this.hubConnection.on('UserJoined', (data: any) => {
+      this.userJoined.emit(data);
+    });
+  }
+  private startConnection(): void {
     this.hubConnection
       .start()
-      .then(() => {this.addUsersListener(); this.callRPC();})
-      .then(() => console.log('Connection started'))
-      .catch(err => console.log('Error while starting connection: ' + err));
+      .then(() => {
+        this.connectionIsEstablished = true;
+        console.log('Hub connection started');
+        this.connectionEstablished.emit(true);
+      })
+      .catch(err => {
+        console.log('Error while establishing connection, retrying...');
+      });
   }
-  public addUsersListener = () => {
-    this.hubConnection.on('ActiveUsers', (data) => {
-      this.data = data;
-      console.log(data);
-    });
-    this.hubConnection.on('NewMessage', (data) => {
-      console.log(data);
-    });
+  public sendMessage(message: any): void {
+    this.hubConnection.invoke('SendMessage', message);
   }
-  public callRPC = () => {
-    this.newMessage.recipientId = '6';
-    this.newMessage.content = 'message from west to west via hub';
+  public loadUsers(): void {
     this.hubConnection.invoke('GetActiveUsers');
-    this.hubConnection.invoke('SendMessage', this.newMessage);
+  }
+  public loadHistory(id: number): void {
+    console.log(id);
+    this.hubConnection.invoke('GetHistory', id);
   }
 }
 /*

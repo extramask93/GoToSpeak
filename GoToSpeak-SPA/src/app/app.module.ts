@@ -11,8 +11,6 @@ import { RegisterComponent } from './register/register.component';
 import { ErrorInterceptorProvider } from './_services/error.interceptor';
 import { AlertifyService } from './_services/alertify.service';
 import { BsDropdownModule } from 'ngx-bootstrap';
-import { MessagesComponent } from './messages/messages.component';
-import { ContactsComponent } from './contacts/contacts.component';
 import { RouterModule } from '@angular/router';
 import { appRoutes } from './routes';
 import { AuthGuard } from './_guards/auth.guard';
@@ -23,8 +21,8 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { MemberListResolver } from './_resolvers/member-list.resolver';
 import { MessagesResolver } from './_resolvers/messages.resolver.';
 import { MemberMessagesComponent } from './members/member-messages/member-messages.component';
-import { TempComponent } from './temp/temp.component';
 import { SignalRService } from './_services/signalR.service';
+import { UsersListComponent } from './users-list/users-list.component';
 
 export function tokenGetter() {
    return localStorage.getItem('token');
@@ -36,12 +34,10 @@ export function tokenGetter() {
       NavComponent,
       HomeComponent,
       RegisterComponent,
-      MessagesComponent,
-      ContactsComponent,
       MemberListComponent,
       MemberCardComponent,
       MemberMessagesComponent,
-      TempComponent
+      UsersListComponent
    ],
    imports: [
       BrowserModule,
@@ -53,7 +49,7 @@ export function tokenGetter() {
             // tslint:disable-next-line:object-literal-shorthand
             tokenGetter: tokenGetter,
             whitelistedDomains: ['localhost:5000'],
-            blacklistedRoutes: ['localhost:5000/api/auth', 'localhost:5000/temp']
+            blacklistedRoutes: ['localhost:5000/api/auth']
          }
       }),
       BsDropdownModule.forRoot(),

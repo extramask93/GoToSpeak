@@ -31,34 +31,48 @@ namespace GoToSpeak.Controllers
             var userIdString = Context.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var userId = int.Parse(userIdString);
             _connections.Add(userId, Context.ConnectionId);
+            var user = await chatRepository.GetUser(userId);
+            await RefreshUsers();
             await base.OnConnectedAsync();
         } 
         public override async Task OnDisconnectedAsync(System.Exception exception) {
             var userId = int.Parse(Context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             _connections.Remove(userId, Context.ConnectionId);
+            var user = await chatRepository.GetUser(userId);
+            await RefreshUsers();
             await base.OnDisconnectedAsync(exception);
         }
-        public async void GetActiveUsers() {
+        private async Task RefreshUsers() {
             var activeIds = _connections.GetKeys();
             List<User> users = new List<User>();
             foreach(var id in activeIds) {
                 var user = await chatRepository.GetUser(id);
                 users.Add(user);
             }
-            await Clients.Client(Context.ConnectionId).SendAsync("ActiveUsers", users);
+            await Clients.All.SendAsync("ActiveUsers", mapper.Map<IEnumerable<UserForListDto>>(users));
         }
-        public async void GetMessageThread(int recipientId)
+        public async Task GetActiveUsers() {
+            var activeIds = _connections.GetKeys();
+            List<User> users = new List<User>();
+            foreach(var id in activeIds) {
+                var user = await chatRepository.GetUser(id);
+                users.Add(user);
+            }
+            await Clients.Client(Context.ConnectionId).SendAsync("ActiveUsers", mapper.Map<IEnumerable<UserForListDto>>(users));
+        }
+        public async void GetHistory(int recipientId)
         {
             var userId = int.Parse(Context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var messageFromRepo = await chatRepository.GetMessageThread(userId, recipientId);
             var messageThread = mapper.Map<IEnumerable<MessageToReturnDto>>(messageFromRepo);
-            await Clients.Client(Context.ConnectionId).SendAsync("MessageThread", messageThread);
+            await Clients.Client(Context.ConnectionId).SendAsync("MessageHistory", messageThread);
         
         }
         public async void SendMessage(MessageForCreationDto messageForCreationDto)
         {
             var userId = int.Parse(Context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var connections = _connections.GetConnections(userId);
+            var connections = _connections.GetConnections(messageForCreationDto.RecipientId);
+            var connectionsSender = _connections.GetConnections(userId);
             var sender = await chatRepository.GetUser(userId);
             messageForCreationDto.SenderId = userId;
             var recipient = await chatRepository.GetUser(messageForCreationDto.RecipientId);
@@ -70,6 +84,11 @@ namespace GoToSpeak.Controllers
                 var messageToReturn = mapper.Map<MessageToReturnDto>(message);
                 foreach(var connection in connections) {
                     await Clients.Client(connection).SendAsync("NewMessage",messageToReturn);
+                }
+                if(userId != messageForCreationDto.RecipientId) {
+                    foreach(var connection in connectionsSender) {
+                        await Clients.Client(connection).SendAsync("NewMessage",messageToReturn);
+                    }
                 }
                 return;
             }
