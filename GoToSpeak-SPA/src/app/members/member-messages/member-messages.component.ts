@@ -6,6 +6,7 @@ import { AlertifyService } from 'src/app/_services/alertify.service';
 import { User } from 'src/app/_models/user';
 import { tap } from 'rxjs/operators';
 import { SignalRService } from 'src/app/_services/signalR.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-member-messages',
@@ -20,14 +21,12 @@ export class MemberMessagesComponent implements OnInit {
   @Input()
   public set recipientId(val: number) {
     this._recipientId = val;
-    if (this.connected) {
-      this.signalRService.loadHistory(val);
-    }
+    this.loadMessages();
   }
   messages: Message[];
   user: User;
   constructor(private chatService: ChatService, private authSerive: AuthService, private alertify: AlertifyService,
-              private signalRService: SignalRService) {
+              private signalRService: SignalRService, private route: ActivatedRoute) {
                 this.userId = this.authSerive.decodedToken.nameid;
                 this.signalRService.connectionEstablished.subscribe((b: boolean) => {
                   this.connected = b; this.signalRService.loadHistory(this.userId); });
@@ -41,7 +40,27 @@ export class MemberMessagesComponent implements OnInit {
                   this.messages.push(message);
                 });
                }
-  ngOnInit() {}
+  ngOnInit() {
+    this.route.data.subscribe(data => {this.messages = data.messages; });
+  }
+  loadMessages() {
+    const currentUserId = +this.authSerive.decodedToken.nameid;
+    this.chatService.getMessageThread(this.authSerive.decodedToken.nameid, this._recipientId)
+    .pipe(
+      tap(messages => {
+        for (let i = 0; i < messages.length; i++) {
+          if (messages[i].isRead === false && messages[i].recipientId === currentUserId) {
+            //this.chatService.markAsRead(currentUserId, messages[i].id);
+          }
+        }
+      })
+    )
+    .subscribe(messages => {
+      this.messages = messages;
+    }, error => {
+      this.alertify.error(error);
+    });
+  }
   sendMessage() {
     this.newMessage.recipientId = this._recipientId;
     this.signalRService.sendMessage(this.newMessage);

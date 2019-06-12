@@ -6,12 +6,14 @@ import { MemberListResolver } from './_resolvers/member-list.resolver';
 import { UsersListComponent } from './users-list/users-list.component';
 import { PhotoEditorComponent } from './photo-editor/photo-editor.component';
 import { UserResolver } from './_resolvers/user.resolver';
+import { MessagesResolver } from './_resolvers/messages.resolver.';
 
 export const appRoutes: Routes = [
     {path: '', component: HomeComponent},
     {path: 'photo', component: PhotoEditorComponent, canActivate: [AuthGuard], resolve: {user: UserResolver}},
     {path: 'users', component: UsersListComponent, canActivate: [AuthGuard]},
-    {path: 'members', component: MemberListComponent, canActivate: [AuthGuard]},
+    {path: 'members', component: MemberListComponent, canActivate: [AuthGuard],
+     resolve: {users: MemberListResolver, messages: MessagesResolver}},
     {path: '**', redirectTo: '', pathMatch: 'full'},
 ];
 
