@@ -21,7 +21,7 @@ export class MemberListComponent implements OnInit {
               private signalRService: SignalRService) {
                 this.signalRService.connectionEstablished.subscribe((b: boolean) => {this.signalRService.loadUsers(); });
                 //this.signalRService.usersReceived.subscribe((users: User[]) => {
-                   //this.users = users; console.log(this.users); }, error => {this.alertify.error(error); });
+                //this.users = users; console.log(this.users); }, error => {this.alertify.error(error); });
                 this.signalRService.messageReceived.subscribe((message: Message) => {
                   for(var user of this.users) {
                     if (user.id === message.recipientId) {
