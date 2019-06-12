@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using GoToSpeak.Data;
 using GoToSpeak.Dtos;
 using GoToSpeak.Models;
@@ -18,10 +19,12 @@ namespace GoToSpeak.Controllers
     {
         private readonly IAuthRepository _repo;
         private readonly IConfiguration _config;
+        private readonly IMapper _mapper;
 
-        public AuthController(IAuthRepository repo, IConfiguration config)
+        public AuthController(IAuthRepository repo, IConfiguration config, IMapper mapper)
         {
             this._config = config;
+            this._mapper = mapper;
             this._repo = repo;
         }
         [HttpPost("register")]
@@ -62,7 +65,8 @@ namespace GoToSpeak.Controllers
             };
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            return Ok(new { token = tokenHandler.WriteToken(token)});
+            var user = _mapper.Map<UserForListDto>(userFromRepo);
+            return Ok(new { token = tokenHandler.WriteToken(token), user});
         }
     }
 }

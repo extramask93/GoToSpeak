@@ -20,9 +20,6 @@ export class MemberListComponent implements OnInit {
               private route: ActivatedRoute, private authService: AuthService,
               private signalRService: SignalRService) {
                 this.signalRService.connectionEstablished.subscribe((b: boolean) => {this.signalRService.loadUsers(); });
-                //this.signalRService.userJoined.subscribe((user: User) => {console.log(user); this.users.push(user); });
-                //this.signalRService.userLeft.subscribe((user: User) =>{
-                  //this.users.forEach((item, index) => {if(item.id === user.id){this.users.splice(index,1);}})} )
                 this.signalRService.usersReceived.subscribe((users: User[]) => {
                    this.users = users; console.log(this.users); }, error => {this.alertify.error(error); });
                 this.signalRService.messageReceived.subscribe((message: Message) => {
@@ -32,7 +29,7 @@ export class MemberListComponent implements OnInit {
                       user.isNewMessage = true;
                     }
                   }
-                });
+                });//iW5im_vAd7e.Mhq
                }
 
   ngOnInit() {

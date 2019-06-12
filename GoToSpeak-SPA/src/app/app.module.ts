@@ -23,6 +23,9 @@ import { MessagesResolver } from './_resolvers/messages.resolver.';
 import { MemberMessagesComponent } from './members/member-messages/member-messages.component';
 import { SignalRService } from './_services/signalR.service';
 import { UsersListComponent } from './users-list/users-list.component';
+import { PhotoEditorComponent } from './photo-editor/photo-editor.component';
+import { FileUploadModule } from 'ng2-file-upload';
+import { UserResolver } from './_resolvers/user.resolver';
 
 export function tokenGetter() {
    return localStorage.getItem('token');
@@ -37,7 +40,8 @@ export function tokenGetter() {
       MemberListComponent,
       MemberCardComponent,
       MemberMessagesComponent,
-      UsersListComponent
+      UsersListComponent,
+      PhotoEditorComponent
    ],
    imports: [
       BrowserModule,
@@ -53,7 +57,8 @@ export function tokenGetter() {
          }
       }),
       BsDropdownModule.forRoot(),
-      RouterModule.forRoot(appRoutes)
+      RouterModule.forRoot(appRoutes),
+      FileUploadModule
    ],
    providers: [
       AuthService,
@@ -63,7 +68,8 @@ export function tokenGetter() {
       AuthGuard,
       MemberListResolver,
       SignalRService,
-      MessagesResolver
+      MessagesResolver,
+      UserResolver
    ],
    bootstrap: [
       AppComponent

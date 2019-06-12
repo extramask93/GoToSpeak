@@ -1,0 +1,20 @@
+.card-img-top
+{
+    height: 50px;
+    width: 50px;
+}
+.contact {
+    border-bottom: 1px solid #b3a9a9;
+}
+.dd {
+    transform: translate(0%, 15%);
+}
+.center {
+    text-align: center;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+

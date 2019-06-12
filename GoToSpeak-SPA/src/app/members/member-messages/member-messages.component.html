@@ -1,7 +1,5 @@
-<div>
-  <p>Chating with: {{this._recipientId}}</p>
-</div>
-<div class="card">
+
+<div class="card mt-2">
   <div class="card-body"  #scrollMe [scrollTop]="scrollMe.scrollHeight">
     <div *ngIf="messages?.length === 0">
       <p>No messages yet</p>
@@ -32,8 +30,6 @@
               <div class="header">
                   <small class="text-muted ">
                       <span class ="fa fa-clock-o">{{message.messageSent}}</span>
-                      <span *ngIf="!message.isRead" class="text-danger">(unread)</span>
-                      <span *ngIf="message.isRead" class="text-success">(Read {{message.deteRead}})</span>
                     </small>
                 <strong class="primary-font float-right">{{message.senderUsername}}</strong>
               </div>

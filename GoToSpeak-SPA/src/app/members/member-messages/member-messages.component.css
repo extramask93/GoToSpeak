@@ -1,5 +1,7 @@
 .card {
     border:none;
+    height: 80vh;
+    width: 600px;
 }
 .chat {
     list-style: none;
@@ -17,9 +19,5 @@
 }
 .card-body {
     overflow-y: scroll;
-    height: 80vh;
-    width: 100%;
-}
-.card {
     width: 100%;
 }

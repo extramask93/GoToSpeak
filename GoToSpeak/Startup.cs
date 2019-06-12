@@ -42,6 +42,7 @@ namespace GoToSpeak
             });
             services.AddAutoMapper(typeof(Startup));
             services.AddCors();
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
             services.AddTransient<Seed>();
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IChatRepository, ChatRepository>();
