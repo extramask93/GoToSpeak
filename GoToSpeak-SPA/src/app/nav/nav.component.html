@@ -5,13 +5,13 @@
     <a class="navbar-brand" routerLinkActive="active" [routerLink]="[ '/home' ]">GoToSpeak</a>
     <ul *ngIf="loggedIn()" class="navbar-nav mr-auto">
       <li class="nav-item" routerLinkActive="active">
-        <a class="nav-link" [routerLink]="[ '/users' ]">Users</a>
+        <a class="nav-link" [routerLink]="[ '/users' ]">Global Chat</a>
       </li>
       <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link" [routerLink]="[ '/members' ]">Chat</a>
+          <a class="nav-link" [routerLink]="[ '/members' ]">Private Chat</a>
       </li>
       <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link" [routerLink]="[ '/photo' ]">Edit Profile</a>
+          <a class="nav-link" [routerLink]="[ '/photo' ]">Profile</a>
       </li>
     </ul>
     <div *ngIf="loggedIn()" class="dropdown" dropdown>
@@ -23,9 +23,11 @@
       </a>
     
       <div class="dropdown-menu mt-3" *dropdownMenu >
-        <a class="dropdown-item" href="#"><i class="fa fa-user"></i>Chat</a>
+        <a class="dropdown-item" [routerLink]="[ '/photo' ]"><i class="fa fa-user mr-2"></i>Profile</a>
+          <div class="dropdown-divider"></div>
+        <a class="dropdown-item" [routerLink]="[ '/members' ]"><i class="fa fa-comments mr-2"></i>Private Chat</a>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" (click)="logOut()"><i class="fa fa-sign-out"></i>Logout</a>
+        <a class="dropdown-item" (click)="logOut()"><i class="fa fa-sign-out mr-2"></i>Logout</a>
       </div>
     </div>
 

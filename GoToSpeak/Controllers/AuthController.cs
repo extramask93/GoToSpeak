@@ -39,7 +39,7 @@ namespace GoToSpeak.Controllers
             var userToCreate = new User
             {
                 UserName = userForRegisterDto.Username,
-
+                PhotoUrl = "https://res.cloudinary.com/dbxqf9dsq/image/upload/v1560411581/user_ddvo0l.png"
             };
             var createdUser = _repo.Register(userToCreate, userForRegisterDto.Password);
             return StatusCode(201);//TODO

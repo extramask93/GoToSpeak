@@ -38,12 +38,12 @@ export class PhotoEditorComponent implements OnInit {
   });
     this.uploader.onAfterAddingFile = (file) => {file.withCredentials = false; };
     this.uploader.onSuccessItem = (item, response, status, headers) => {
-      if(response) {
+      if (response) {
         const res: Photo = JSON.parse(response);
         this.authService.currentUser.photoUrl = res.photoUrl;
         localStorage.setItem('user', JSON.stringify(this.authService.currentUser));
         this.authService.changeMemberPhoto(res.photoUrl);
       }
-    }
+    };
   }
 }

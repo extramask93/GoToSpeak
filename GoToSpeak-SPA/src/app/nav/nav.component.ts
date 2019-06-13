@@ -27,7 +27,6 @@ export class NavComponent implements OnInit {
     },
     () => {this.router.navigate(['/messages']); }
     );
-    console.log(this.authService.decodedToken.unique_name);
   }
   loggedIn() {
     return this.authService.loggedIn();

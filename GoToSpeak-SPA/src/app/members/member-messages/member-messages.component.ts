@@ -15,6 +15,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class MemberMessagesComponent implements OnInit {
   connected = false;
+  // tslint:disable-next-line:variable-name
   _recipientId: number;
   userId: number;
   newMessage: any = {};
@@ -28,14 +29,6 @@ export class MemberMessagesComponent implements OnInit {
   constructor(private chatService: ChatService, private authSerive: AuthService, private alertify: AlertifyService,
               private signalRService: SignalRService, private route: ActivatedRoute) {
                 this.userId = this.authSerive.decodedToken.nameid;
-                this.signalRService.connectionEstablished.subscribe((b: boolean) => {
-                  this.connected = b; this.signalRService.loadHistory(this.userId); });
-                this.signalRService.historyReceived.subscribe(messages => {
-                  console.log(messages);
-                  this.messages = messages;
-                }, error => {
-                  this.alertify.error(error);
-                });
                 this.signalRService.messageReceived.subscribe((message: Message) => {
                   this.messages.push(message);
                 });
@@ -48,9 +41,10 @@ export class MemberMessagesComponent implements OnInit {
     this.chatService.getMessageThread(this.authSerive.decodedToken.nameid, this._recipientId)
     .pipe(
       tap(messages => {
+        // tslint:disable-next-line:prefer-for-of
         for (let i = 0; i < messages.length; i++) {
           if (messages[i].isRead === false && messages[i].recipientId === currentUserId) {
-            //this.chatService.markAsRead(currentUserId, messages[i].id);
+            // this.chatService.markAsRead(currentUserId, messages[i].id);
           }
         }
       })
