@@ -7,15 +7,15 @@ Project is divided into 2 separate projects: server side in c# "GoToSpeak" and c
 4. cd GoToSpeak
 5. code .
 Go to addons tab and isntall:
-	*C# for visual studio code
-	*c# extensions
-	*NuGet Package Manager,
-restore nuget dependecies
+5.1. *C# for visual studio code
+5.2. *c# extensions
+5.3. *NuGet Package Manager,
+6. restore nuget dependecies
 Go to build in vs terminal:
-->cd GoToSpeak
-->dotnet ef database update
+6.1.->cd GoToSpeak
+6.2.->dotnet ef database update
 before first run uncomment database seeding statement->Startup.cs->seed.SeedUsers();
-->dotnet watch run
+6.3.->dotnet watch run
 ->ctrl+c to stop server
 # Running Client Side:
 1. Install node.js
