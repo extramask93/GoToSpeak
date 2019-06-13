@@ -3,8 +3,9 @@ Project is divided into 2 separate projects: server side in c# "GoToSpeak" and c
 # Running Server Side:
 1. Install Visual Studio Code,
 2. git clone https://github.com/extramask93/GoToSpeak.git
-3. cd GoToSpeak
-4. code .
+3. git checkout real-time
+4. cd GoToSpeak
+5. code .
 Go to addons tab and isntall:
 	*C# for visual studio code
 	*c# extensions
