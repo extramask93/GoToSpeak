@@ -3,7 +3,7 @@ import { HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import {BehaviorSubject} from 'rxjs';
-import { environment } from 'src/environments/environment.prod';
+import { environment } from 'src/environments/environment';
 import { User } from '../_models/user';
 
 @Injectable({

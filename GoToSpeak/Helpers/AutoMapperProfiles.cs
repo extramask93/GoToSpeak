@@ -11,6 +11,7 @@ namespace GoToSpeak.Helpers
             CreateMap<User, UserForListDto>();
             CreateMap<MessageForCreationDto,Message>().ReverseMap();
             CreateMap<Message, MessageToReturnDto>();
+            CreateMap<MessageForCreationDto, MessageToReturnDto>();
             CreateMap<User,PhotoForCreationDto>();
             CreateMap<User,PhotoToReturnDto>();
         }

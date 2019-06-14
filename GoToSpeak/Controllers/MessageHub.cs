@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -9,6 +10,7 @@ using GoToSpeak.Dtos;
 using GoToSpeak.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace GoToSpeak.Controllers
@@ -19,11 +21,13 @@ namespace GoToSpeak.Controllers
 
         private readonly static ConnectionMapping<int> _connections = 
             new ConnectionMapping<int>();
+        private readonly DataContext context;
         private readonly IChatRepository chatRepository;
         private readonly IMapper mapper;
 
-        public MessageHub(IChatRepository chatRepository, IMapper mapper)
+        public MessageHub(DataContext context,IChatRepository chatRepository, IMapper mapper)
         {
+            this.context = context;
             this.chatRepository = chatRepository;
             this.mapper = mapper;
         }
@@ -68,26 +72,39 @@ namespace GoToSpeak.Controllers
             await Clients.Client(Context.ConnectionId).SendAsync("MessageHistory", messageThread);
         
         }
+        public async void SendGlobalMessage(MessageForCreationDto messageForCreationDto) {
+            var userId = int.Parse(Context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var sender = context.Users.FirstOrDefault(u => u.Id == userId);
+            var messageToReturn = mapper.Map<MessageToReturnDto>(messageForCreationDto);
+            messageToReturn.SenderUsername = sender.UserName;
+            messageToReturn.SenderPhotoUrl = sender.PhotoUrl;
+            messageToReturn.SenderId = userId;
+            await Clients.All.SendAsync("NewGlobalMessage",messageToReturn);
+        }
         public async void SendMessage(MessageForCreationDto messageForCreationDto)
         {
+            
+
             var userId = int.Parse(Context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var connections = _connections.GetConnections(messageForCreationDto.RecipientId);
             var connectionsSender = _connections.GetConnections(userId);
-            var sender = await chatRepository.GetUser(userId);
+            var sender = context.Users.FirstOrDefault(u => u.Id == userId);
+
             messageForCreationDto.SenderId = userId;
-            var recipient = await chatRepository.GetUser(messageForCreationDto.RecipientId);
+            var recipient = context.Users.FirstOrDefault(u => u.Id == messageForCreationDto.RecipientId);
+
             if(recipient == null)
                 throw new HubException("Could not find user");
             var message = mapper.Map<Message>(messageForCreationDto);
-            chatRepository.Add(message);
-            if(await chatRepository.SaveAll()) {
+            context.Messages.Add(message);
+            if(context.SaveChanges()>0) {
                 var messageToReturn = mapper.Map<MessageToReturnDto>(message);
                 foreach(var connection in connections) {
                     await Clients.Client(connection).SendAsync("NewMessage",messageToReturn);
                 }
                 if(userId != messageForCreationDto.RecipientId) {
                     foreach(var connection in connectionsSender) {
-                        await Clients.Client(connection).SendAsync("NewMessage",messageToReturn);
+                         await Clients.Client(connection).SendAsync("NewMessage",messageToReturn);
                     }
                 }
                 return;

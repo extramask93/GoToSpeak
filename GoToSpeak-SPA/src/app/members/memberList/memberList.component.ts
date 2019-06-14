@@ -19,11 +19,9 @@ export class MemberListComponent implements OnInit {
   constructor(private chatService: ChatService, private alertify: AlertifyService,
               private route: ActivatedRoute, private authService: AuthService,
               private signalRService: SignalRService) {
-                this.signalRService.connectionEstablished.subscribe((b: boolean) => {this.signalRService.loadUsers(); });
                 this.signalRService.messageReceived.subscribe((message: Message) => {
                   for (const user of this.users) {
                     if (user.id === message.recipientId) {
-                      console.log(user);
                       user.isNewMessage = true;
                     }
                   }

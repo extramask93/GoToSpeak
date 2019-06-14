@@ -12,7 +12,7 @@
               <div class="header">
                 <strong class="primary-font">{{message.senderUsername}}</strong>
                 <small class="text-muted float-right">
-                  <span class ="fa fa-clock-o">{{message.messageSent}}</span>
+                  <span class ="fa fa-clock-o">{{message.messageSent | timeAgo}}</span>
                 </small>
               </div>
               <p>{{message.content}}</p>
@@ -26,7 +26,7 @@
               <div class="chat-body">
                 <div class="header">
                     <small class="text-muted ">
-                        <span class ="fa fa-clock-o">{{message.messageSent}}</span>
+                        <span class ="fa fa-clock-o">{{message.messageSent | timeAgo}}</span>
                       </small>
                   <strong class="primary-font float-right">{{message.senderUsername}}</strong>
                 </div>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using GoToSpeak.Models;
 using Newtonsoft.Json;
 
@@ -14,6 +15,7 @@ namespace GoToSpeak.Data
             this._context = context;
         }
         public void SeedUsers() {
+            if(!_context.Users.Any()) {
             var userData = System.IO.File.ReadAllText("Data/UserSeedData.json");
             var users = JsonConvert.DeserializeObject<List<User>>(userData);
             foreach(var user in users) {
@@ -25,6 +27,7 @@ namespace GoToSpeak.Data
                 _context.Users.Add(user);
             }
             _context.SaveChanges();
+            }
         }
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {

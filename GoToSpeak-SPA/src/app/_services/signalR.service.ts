@@ -2,11 +2,13 @@ import { Injectable, EventEmitter } from '@angular/core';
 import * as signalR from '@aspnet/signalr';
 import { Message } from '../_models/message';
 import { User } from '../_models/user';
+import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class SignalRService {
   messageReceived = new EventEmitter<Message>();
+  globalMessageReceived = new EventEmitter<Message>();
   historyReceived = new EventEmitter<Message[]>();
   usersReceived = new EventEmitter<User[]>();
   userJoined = new EventEmitter<User[]>();
@@ -17,6 +19,7 @@ export class SignalRService {
   private newMessage: any = {};
   private connectionIsEstablished = false;
   private hubConnection: signalR.HubConnection;
+  baseUrl = environment.sigRUrl;
 
   constructor() {
     this.createConnection();
@@ -25,7 +28,7 @@ export class SignalRService {
   }
   private createConnection() {
     this.hubConnection = new signalR.HubConnectionBuilder()
-    .withUrl('http://localhost:5000/temp', {
+    .withUrl(this.baseUrl + 'temp', {
       accessTokenFactory: () => {
           return localStorage.getItem('token');
       }
@@ -36,6 +39,9 @@ export class SignalRService {
     this.hubConnection.on('NewMessage', (data: any) => {
       this.messageReceived.emit(data);
     });
+    this.hubConnection.on('NewGlobalMessage', (data: any) => {
+      this.globalMessageReceived.emit(data);
+    })
     this.hubConnection.on('ActiveUsers', (data: any) => {
       this.usersReceived.emit(data);
     });
@@ -48,6 +54,7 @@ export class SignalRService {
     this.hubConnection.on('UserJoined', (data: any) => {
       this.userJoined.emit(data);
     });
+    this.hubConnection.onclose((error) => {this.hubConnection.start(); });
   }
   private startConnection(): void {
     this.hubConnection
@@ -61,15 +68,11 @@ export class SignalRService {
         console.log('Error while establishing connection, retrying...');
       });
   }
+  public sendGlobalMessage(message: any) {
+    this.hubConnection.invoke('SendGlobalMessage', message);
+  }
   public sendMessage(message: any): void {
     this.hubConnection.invoke('SendMessage', message);
-  }
-  public loadUsers(): void {
-    this.hubConnection.invoke('GetActiveUsers');
-  }
-  public loadHistory(id: number): void {
-    console.log(id);
-    this.hubConnection.invoke('GetHistory', id);
   }
 }
 /*

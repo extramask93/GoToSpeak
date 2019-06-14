@@ -1,18 +1,38 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GoToSpeak.Migrations
 {
-    public partial class MessageEntity : Migration
+    public partial class azureMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UserName = table.Column<string>(nullable: true),
+                    PasswordHash = table.Column<byte[]>(nullable: true),
+                    PasswordSalt = table.Column<byte[]>(nullable: true),
+                    LastActive = table.Column<DateTime>(nullable: false),
+                    Email = table.Column<string>(nullable: true),
+                    PhotoUrl = table.Column<string>(nullable: true),
+                    PhotoPublicID = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Messages",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     SenderId = table.Column<int>(nullable: false),
                     RecipientId = table.Column<int>(nullable: false),
                     Content = table.Column<string>(nullable: true),
@@ -54,6 +74,9 @@ namespace GoToSpeak.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Messages");
+
+            migrationBuilder.DropTable(
+                name: "Users");
         }
     }
 }

@@ -34,7 +34,6 @@ export class MemberMessagesComponent implements OnInit {
                 });
                }
   ngOnInit() {
-    this.route.data.subscribe(data => {this.messages = data.messages; });
   }
   loadMessages() {
     const currentUserId = +this.authSerive.decodedToken.nameid;

@@ -26,6 +26,7 @@ import { UsersListComponent } from './users-list/users-list.component';
 import { PhotoEditorComponent } from './photo-editor/photo-editor.component';
 import { FileUploadModule } from 'ng2-file-upload';
 import { UserResolver } from './_resolvers/user.resolver';
+import { TimeAgoPipe } from 'time-ago-pipe';
 
 export function tokenGetter() {
    return localStorage.getItem('token');
@@ -41,7 +42,8 @@ export function tokenGetter() {
       MemberCardComponent,
       MemberMessagesComponent,
       UsersListComponent,
-      PhotoEditorComponent
+      PhotoEditorComponent,
+      TimeAgoPipe
    ],
    imports: [
       BrowserModule,
