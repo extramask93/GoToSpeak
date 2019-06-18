@@ -7,6 +7,7 @@ import { UsersListComponent } from './users-list/users-list.component';
 import { PhotoEditorComponent } from './photo-editor/photo-editor.component';
 import { UserResolver } from './_resolvers/user.resolver';
 import { MessagesResolver } from './_resolvers/messages.resolver.';
+import { WelcomeComponent } from './welcome/welcome.component';
 
 export const appRoutes: Routes = [
     {path: '', component: HomeComponent},
@@ -14,6 +15,7 @@ export const appRoutes: Routes = [
     {path: 'users', component: UsersListComponent, canActivate: [AuthGuard]},
     {path: 'members', component: MemberListComponent, canActivate: [AuthGuard],
      resolve: {users: MemberListResolver, messages: MessagesResolver}},
+    {path: 'welcome', component: WelcomeComponent},
     {path: '**', redirectTo: '', pathMatch: 'full'},
 ];
 

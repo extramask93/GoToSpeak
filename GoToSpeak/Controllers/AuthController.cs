@@ -41,8 +41,8 @@ namespace GoToSpeak.Controllers
                 UserName = userForRegisterDto.Username,
                 PhotoUrl = "https://res.cloudinary.com/dbxqf9dsq/image/upload/v1560411581/user_ddvo0l.png"
             };
-            var createdUser = _repo.Register(userToCreate, userForRegisterDto.Password);
-            return StatusCode(201);//TODO
+            var createdUser = await _repo.Register(userToCreate, userForRegisterDto.Password);
+            return Ok(new {username = createdUser.UserName});
         }
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto UserForLoginDto)
