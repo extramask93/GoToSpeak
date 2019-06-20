@@ -14,6 +14,8 @@ namespace GoToSpeak.Helpers
             CreateMap<MessageForCreationDto, MessageToReturnDto>();
             CreateMap<User,PhotoForCreationDto>();
             CreateMap<User,PhotoToReturnDto>();
+            CreateMap<Room, RoomToReturn>();
+            CreateMap<RoomToReturn, Room>();
         }
     }
 }

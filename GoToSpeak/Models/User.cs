@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 namespace GoToSpeak.Models
 {
     public class User
@@ -17,6 +18,7 @@ namespace GoToSpeak.Models
         public string PhotoPublicID {get; set;}
         public ICollection<Message> MessagesSent { get; set; }
         public ICollection<Message> MessagesReceived { get; set; }
+        public virtual ICollection<Room> Rooms { get; set; }
         
     }
 }

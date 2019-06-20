@@ -8,5 +8,6 @@ namespace GoToSpeak.Dtos
         public string UserName { get; set; }
         public DateTime LastActive { get;set; }
         public string PhotoUrl { get; set; }
+        public string CurrentRoom { get; set; }
     }
 }

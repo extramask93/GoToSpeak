@@ -1,0 +1,10 @@
+
+.scrollable {
+    overflow-y: scroll;
+    width: 100%;
+}
+.full-height {
+    height: 70vh;
+}
+
+

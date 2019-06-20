@@ -3,29 +3,25 @@ using System;
 using GoToSpeak.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GoToSpeak.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20190613123833_azureMigration")]
-    partial class azureMigration
+    [Migration("20190620143802_migration")]
+    partial class migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
 
             modelBuilder.Entity("GoToSpeak.Models.Message", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Content");
 
@@ -37,11 +33,13 @@ namespace GoToSpeak.Migrations
 
                     b.Property<bool>("RecipientDeleted");
 
-                    b.Property<int>("RecipientId");
+                    b.Property<int?>("RecipientId");
 
                     b.Property<bool>("SenderDeleted");
 
                     b.Property<int>("SenderId");
+
+                    b.Property<int?>("ToRoomId");
 
                     b.HasKey("Id");
 
@@ -49,14 +47,15 @@ namespace GoToSpeak.Migrations
 
                     b.HasIndex("SenderId");
 
+                    b.HasIndex("ToRoomId");
+
                     b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("GoToSpeak.Models.User", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Email");
 
@@ -77,6 +76,22 @@ namespace GoToSpeak.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("GoToSpeak.Room", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("CreatorId");
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("Rooms");
+                });
+
             modelBuilder.Entity("GoToSpeak.Models.Message", b =>
                 {
                     b.HasOne("GoToSpeak.Models.User", "Recipient")
@@ -88,6 +103,18 @@ namespace GoToSpeak.Migrations
                         .WithMany("MessagesSent")
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("GoToSpeak.Room", "ToRoom")
+                        .WithMany("Messages")
+                        .HasForeignKey("ToRoomId");
+                });
+
+            modelBuilder.Entity("GoToSpeak.Room", b =>
+                {
+                    b.HasOne("GoToSpeak.Models.User", "Creator")
+                        .WithMany("Rooms")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

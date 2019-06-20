@@ -1,0 +1,11 @@
+<div class="container">
+<div class="row mt-2 contact">
+    <div class="col-sm">
+        <h5 class="text-center center">{{room.name}}</h5>
+    </div>
+    <div class="col-sm">
+        <a class="mr-2 btn btn-primary" (click)="this.roomDeletedEvent.emit(room)"><i class="fa fa-trash-o"></i></a>
+        <a class="btn btn-primary"(click)= "this.roomSelectedEvent.emit(room)"><i class="fa fa-sign-in"></i></a>
+    </div>
+  </div>
+</div>

@@ -4,7 +4,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {HttpClientModule} from '@angular/common/http';
 import { NavComponent } from './nav/nav.component';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { AuthService } from './_services/auth.service';
 import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
@@ -28,6 +28,17 @@ import { FileUploadModule } from 'ng2-file-upload';
 import { UserResolver } from './_resolvers/user.resolver';
 import { TimeAgoPipe } from 'time-ago-pipe';
 import { WelcomeComponent } from './welcome/welcome.component';
+import { LobbyComponent } from './lobby/lobby/lobby.component';
+import { RoomListComponent } from './lobby/room-list/room-list.component';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import { RoomCardComponent } from './lobby/room-list/room-card/room-card.component';
+import { UserCardComponent } from './lobby/user-list/user-card/user-card.component';
+import { UserListComponent } from './lobby/user-list/user-list.component';
+import { RoomServiceService } from './_services/room-service.service';
+import { ChatWindowComponent } from './lobby/chat-window/chat-window.component';
+import { RoomResolver } from './_resolvers/room.resolver';
+import { ListResolver } from './_resolvers/list.resolver';
+import { ChatResolver } from './_resolvers/chat.resolver';
 
 export function tokenGetter() {
    return localStorage.getItem('token');
@@ -45,13 +56,20 @@ export function tokenGetter() {
       UsersListComponent,
       PhotoEditorComponent,
       TimeAgoPipe,
-      WelcomeComponent
+      WelcomeComponent,
+      LobbyComponent,
+      RoomListComponent,
+      RoomCardComponent,
+      UserCardComponent,
+      UserListComponent,
+      ChatWindowComponent
    ],
    imports: [
       BrowserModule,
       AppRoutingModule,
       HttpClientModule,
       FormsModule,
+      ReactiveFormsModule,
       JwtModule.forRoot({
          config: {
             // tslint:disable-next-line:object-literal-shorthand
@@ -62,7 +80,8 @@ export function tokenGetter() {
       }),
       BsDropdownModule.forRoot(),
       RouterModule.forRoot(appRoutes),
-      FileUploadModule
+      FileUploadModule,
+      NgbModule
    ],
    providers: [
       AuthService,
@@ -72,8 +91,12 @@ export function tokenGetter() {
       AuthGuard,
       MemberListResolver,
       SignalRService,
+      RoomServiceService,
       MessagesResolver,
-      UserResolver
+      UserResolver,
+      RoomResolver,
+      ListResolver,
+      ChatResolver
    ],
    bootstrap: [
       AppComponent

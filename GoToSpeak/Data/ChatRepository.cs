@@ -78,5 +78,11 @@ namespace GoToSpeak.Data
         {
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<IEnumerable<Room>> GetRooms()
+        {
+            var rooms = await _context.Rooms.ToListAsync();
+            return rooms;
+        }
     }
 }

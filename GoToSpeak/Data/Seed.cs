@@ -14,6 +14,12 @@ namespace GoToSpeak.Data
         {
             this._context = context;
         }
+        public void SeedRooms() {
+            if(!_context.Rooms.Any()) {
+                Room room = new Room{Name = "Lobby"};
+                _context.Rooms.Add(room);
+            }
+        }
         public void SeedUsers() {
             if(!_context.Users.Any()) {
             var userData = System.IO.File.ReadAllText("Data/UserSeedData.json");

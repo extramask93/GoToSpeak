@@ -148,7 +148,8 @@ namespace GoToSpeak
                 //app.UseHsts();
             }
             //app.UseHttpsRedirection();
-            seed.SeedUsers();        
+            seed.SeedUsers();
+            seed.SeedRooms();        
             app.UseDefaultFiles();
             app.UseStaticFiles(); 
             app.UseCors(builder =>
