@@ -21,7 +21,6 @@ export class RoomResolver implements Resolve<Room[]> {
 
     resolve(route: ActivatedRouteSnapshot): Observable<Room[]> {
         if (this.signalrService.connectionIsEstablished) {
-
         return from(this.signalrService.getRooms());
         }
         return of(null);
