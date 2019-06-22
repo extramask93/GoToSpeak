@@ -1,9 +1,10 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GoToSpeak.Migrations
 {
-    public partial class migration : Migration
+    public partial class azureMigration2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,7 +13,7 @@ namespace GoToSpeak.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     UserName = table.Column<string>(nullable: true),
                     PasswordHash = table.Column<byte[]>(nullable: true),
                     PasswordSalt = table.Column<byte[]>(nullable: true),
@@ -31,7 +32,7 @@ namespace GoToSpeak.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(nullable: true),
                     CreatorId = table.Column<int>(nullable: false)
                 },
@@ -43,7 +44,7 @@ namespace GoToSpeak.Migrations
                         column: x => x.CreatorId,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -51,7 +52,7 @@ namespace GoToSpeak.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     SenderId = table.Column<int>(nullable: false),
                     RecipientId = table.Column<int>(nullable: true),
                     Content = table.Column<string>(nullable: true),

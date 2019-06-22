@@ -217,11 +217,13 @@ namespace GoToSpeak.Controllers
                 if (user.CurrentRoom != roomName)
                 {
                     // Remove user from others list
-                    if (!string.IsNullOrEmpty(user.CurrentRoom))
+                    if (!string.IsNullOrEmpty(user.CurrentRoom)) {
                         Clients.OthersInGroup(user.CurrentRoom).RemoveUser(user);
+                        Leave(user.CurrentRoom);
+                    }
 
                     // Join to new chat room
-                    Leave(user.CurrentRoom);
+                    
                     Groups.AddToGroupAsync(Context.ConnectionId, roomName);
                     user.CurrentRoom = roomName;
 
@@ -231,7 +233,7 @@ namespace GoToSpeak.Controllers
             }
             catch (Exception ex)
             {
-                Clients.Caller.OnError("You failed to join the chat room!" + ex.Message);
+                Clients.Caller.OnError("You failed to join the chat room!" + roomName + ex.Message);
             }
         }
 

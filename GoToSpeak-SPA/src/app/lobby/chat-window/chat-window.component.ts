@@ -24,9 +24,8 @@ export class ChatWindowComponent implements OnInit {
     this.signalRService.messageReceived.subscribe((message: Message) => {
       console.log(message);
       this.messages.push(message);
-      this.route.data.subscribe(data => {this.messages = data.messages; });
-
     });
+    this.route.data.subscribe(data => {this.messages = data.messages; });
    }
   ngOnInit() {
   }
