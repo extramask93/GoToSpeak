@@ -21,7 +21,8 @@ export class SignInComponent implements OnInit {
       this.alertify.success('logged in successfully');
     },
     error => {
-      console.log(JSON.stringify(error));
+      this.alertify.error(error);
+      this.info = error;
     },
     () => {this.router.navigate(['/members']); }
     );

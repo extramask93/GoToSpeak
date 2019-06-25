@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Tokens;
 
 namespace GoToSpeak.Controllers
@@ -52,14 +53,17 @@ namespace GoToSpeak.Controllers
             var user = await _UserManager.FindByNameAsync(UserForLoginDto.Username);
             var result = await _signInManager.CheckPasswordSignInAsync(user,UserForLoginDto.Password,true);
             if (result.IsLockedOut) {
-                return Unauthorized(new {message = "Account has been locked"});
+                return BadRequest(string.Format("Account has been locked for 5 minutes due to multiple failed login attemts"));
             }
             if(result.Succeeded) {
             var token = GenerateJwtToken(user).Result;
             var userToReturn = _mapper.Map<UserForListDto>(user);
             return Ok(new { token = token, user = userToReturn });
             }
-            return Unauthorized(new { message = "Username or password is incorrect" });
+            int accessFailedCount = await _UserManager.GetAccessFailedCountAsync(user);
+            int attemptsLeft = 3-
+                        accessFailedCount;
+            return BadRequest(string.Format("Username or password is incorrect, there are {0} tries left before a lockout", attemptsLeft.ToString()));
         }
         private async Task<string> GenerateJwtToken(User user)
         {
