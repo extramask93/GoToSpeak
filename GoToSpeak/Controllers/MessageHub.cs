@@ -16,7 +16,6 @@ using Newtonsoft.Json;
 
 namespace GoToSpeak.Controllers
 {
-    [Authorize]
     public class MessageHub : Hub<IMessageHub>
     {
 

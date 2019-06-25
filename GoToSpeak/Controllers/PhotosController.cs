@@ -12,7 +12,6 @@ using Microsoft.Extensions.Options;
 
 namespace GoToSpeak.Controllers
 {
-    [Authorize]
     [Route("/api/users/{userId}/photo")]
     [ApiController]
     public class PhotosController : ControllerBase

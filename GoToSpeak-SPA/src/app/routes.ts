@@ -12,16 +12,20 @@ import { LobbyComponent } from './lobby/lobby/lobby.component';
 import { ChatResolver } from './_resolvers/chat.resolver';
 import { ListResolver } from './_resolvers/list.resolver';
 import { RoomResolver } from './_resolvers/room.resolver';
+import { AdminPanelComponent } from './admin/admin-panel/admin-panel.component';
+import { SignInComponent } from './sign-in/sign-in.component';
 
 export const appRoutes: Routes = [
     {path: '', component: HomeComponent},
     {path: 'lobby', component: LobbyComponent,
     resolve: {messages: ChatResolver, users: ListResolver, rooms: RoomResolver}},
+    {path: 'signin', component: SignInComponent},
     {path: 'photo', component: PhotoEditorComponent, canActivate: [AuthGuard], resolve: {user: UserResolver}},
     {path: 'users', component: UsersListComponent, canActivate: [AuthGuard]},
     {path: 'members', component: MemberListComponent, canActivate: [AuthGuard],
      resolve: {users: MemberListResolver, messages: MessagesResolver}},
     {path: 'welcome', component: WelcomeComponent},
-    {path: '**', redirectTo: '', pathMatch: 'full'},
+    {path: 'admin', component: AdminPanelComponent, canActivate: [AuthGuard], data: {roles: ['Admin', 'Moderator']}},
+    {path: '**', redirectTo: '', pathMatch: 'full'}
 ];
 

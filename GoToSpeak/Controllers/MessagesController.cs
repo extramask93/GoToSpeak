@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace GoToSpeak.Controllers
 {
-    [Authorize]
     [Route("api/users/{userId}/[controller]")]
     [ApiController]
     public class MessagesController : ControllerBase

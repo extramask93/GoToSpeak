@@ -4,4 +4,5 @@ export interface User {
     lastActive: Date;
     photoUrl: string;
     isNewMessage: boolean;
+    roles?: string[];
 }

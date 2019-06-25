@@ -39,6 +39,11 @@ import { ChatWindowComponent } from './lobby/chat-window/chat-window.component';
 import { RoomResolver } from './_resolvers/room.resolver';
 import { ListResolver } from './_resolvers/list.resolver';
 import { ChatResolver } from './_resolvers/chat.resolver';
+import { AdminPanelComponent } from './admin/admin-panel/admin-panel.component';
+import { HasRoleDirective } from './_directives/hasRole.directive';
+import { UserManagementComponent } from './admin/user-management/user-management.component';
+import { AdminService } from './_services/admin.service';
+import { SignInComponent } from './sign-in/sign-in.component';
 
 export function tokenGetter() {
    return localStorage.getItem('token');
@@ -62,7 +67,11 @@ export function tokenGetter() {
       RoomCardComponent,
       UserCardComponent,
       UserListComponent,
-      ChatWindowComponent
+      ChatWindowComponent,
+      AdminPanelComponent,
+      UserManagementComponent,
+      HasRoleDirective,
+      SignInComponent
    ],
    imports: [
       BrowserModule,
@@ -74,8 +83,8 @@ export function tokenGetter() {
          config: {
             // tslint:disable-next-line:object-literal-shorthand
             tokenGetter: tokenGetter,
-            whitelistedDomains: ['localhost:5000'],
-            blacklistedRoutes: ['localhost:5000/api/auth']
+            whitelistedDomains: ['localhost:5000', 'localhost:5001'],
+            blacklistedRoutes: ['localhost:5000/api/auth', 'localhost:5001/api/auth']
          }
       }),
       BsDropdownModule.forRoot(),
@@ -96,7 +105,8 @@ export function tokenGetter() {
       UserResolver,
       RoomResolver,
       ListResolver,
-      ChatResolver
+      ChatResolver,
+      AdminService
    ],
    bootstrap: [
       AppComponent
