@@ -44,6 +44,8 @@ import { HasRoleDirective } from './_directives/hasRole.directive';
 import { UserManagementComponent } from './admin/user-management/user-management.component';
 import { AdminService } from './_services/admin.service';
 import { SignInComponent } from './sign-in/sign-in.component';
+import { SendResetEmailComponent } from './sign-in/send-reset-email/send-reset-email.component';
+import { ResetPasswordComponent } from './sign-in/reset-password/reset-password.component';
 
 export function tokenGetter() {
    return localStorage.getItem('token');
@@ -71,7 +73,9 @@ export function tokenGetter() {
       AdminPanelComponent,
       UserManagementComponent,
       HasRoleDirective,
-      SignInComponent
+      SignInComponent,
+      SendResetEmailComponent,
+      ResetPasswordComponent
    ],
    imports: [
       BrowserModule,

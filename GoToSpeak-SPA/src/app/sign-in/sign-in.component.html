@@ -11,7 +11,7 @@
     <div *ngIf="this.info">
       <p class="text-center alert alert-danger">{{this.info}}</p>
     </div>
-    <p class ="text-center"><a href="#">If you have forgotten your password - reset it here.</a></p>
+    <p class ="text-center"><a [routerLink]="[ '/sendEmail' ]">If you have forgotten your password - reset it here.</a></p>
     <div class="form-group text-center">
       <button [disabled]="!registerForm.valid" class="btn btn-primary" type="submit">Login</button>
     </div>

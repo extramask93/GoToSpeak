@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using AutoMapper;
 using GoToSpeak.Data;
 using GoToSpeak.Dtos;
@@ -14,6 +17,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Tokens;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace GoToSpeak.Controllers
 {
@@ -36,6 +41,34 @@ namespace GoToSpeak.Controllers
             this._config = config;
             this._mapper = mapper;
         }
+        [HttpPost("emailReset")]
+        public async Task<IActionResult> SendPasswordResetLink(UserNameDto userName)
+        {
+            var user = await _UserManager.FindByNameAsync(userName.UserName);
+            if(user == null || user.Email == null)
+            {
+                return BadRequest("User does not exists or lacks email address");
+            }
+            var token = await _UserManager.GeneratePasswordResetTokenAsync(user);
+            var resetLink = "https://localhost:4200/resetPassword?token=" + HttpUtility.UrlEncode(token);
+            SendEmail(user.Email,"Here is your reset link: " + resetLink);
+            return Ok(new {message = "Reset password link has been sent to your email"});
+        }
+        [HttpPost("reset")]
+        public async Task<IActionResult> ResetPassword(PasswordForResetDto passwordForReset)
+        {
+            if(passwordForReset.Password != passwordForReset.ConfirmPassword) 
+            {
+                return BadRequest("Passwords must be the same");
+            }
+            var user = await _UserManager.FindByNameAsync(passwordForReset.UserName);
+            var result = await _UserManager.ResetPasswordAsync(user, passwordForReset.Token, passwordForReset.Password);
+            if(result.Succeeded)
+            {
+                return Ok(new {message= "Password has been changed"});
+            }
+            return BadRequest();
+        }
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
         {
@@ -51,6 +84,10 @@ namespace GoToSpeak.Controllers
         public async Task<IActionResult> Login(UserForLoginDto UserForLoginDto)
         {
             var user = await _UserManager.FindByNameAsync(UserForLoginDto.Username);
+            if(user == null)
+            {
+                return BadRequest("User does not exist");
+            }
             var result = await _signInManager.CheckPasswordSignInAsync(user,UserForLoginDto.Password,true);
             if (result.IsLockedOut) {
                 return BadRequest(string.Format("Account has been locked for 5 minutes due to multiple failed login attemts"));
@@ -88,6 +125,18 @@ namespace GoToSpeak.Controllers
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
 
+        }
+        private void SendEmail(string to, string message)
+        {
+            var client = new SendGridClient("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");
+            var msg = new SendGridMessage()
+            {
+                From = new EmailAddress("support@gotospeak.com", "GoToSpeak Team"),
+                Subject = "Password reset link.",
+                HtmlContent = message
+            };
+            msg.AddTo(new EmailAddress(to));
+            var response = client.SendEmailAsync(msg).Result;
         }
     }
 }

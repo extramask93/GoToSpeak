@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse} from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams} from '@angular/common/http';
 import {map, catchError} from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import {BehaviorSubject} from 'rxjs';
@@ -45,6 +45,12 @@ register(model: any) {
 loggedIn() {
   const token = localStorage.getItem('token');
   return !this.jwtHelper.isTokenExpired(token);
+}
+sendEmail(model: any) {
+  return this.http.post(this.baseUrl + 'auth/emailReset', model);
+}
+resetPassword(model: any) {
+  return this.http.post(this.baseUrl + 'auth/reset', model);
 }
 roleMatch(allowedRoles): boolean {
   let isMatch = false;

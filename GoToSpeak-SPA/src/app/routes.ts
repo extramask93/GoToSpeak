@@ -14,11 +14,15 @@ import { ListResolver } from './_resolvers/list.resolver';
 import { RoomResolver } from './_resolvers/room.resolver';
 import { AdminPanelComponent } from './admin/admin-panel/admin-panel.component';
 import { SignInComponent } from './sign-in/sign-in.component';
+import { SendResetEmailComponent } from './sign-in/send-reset-email/send-reset-email.component';
+import { ResetPasswordComponent } from './sign-in/reset-password/reset-password.component';
 
 export const appRoutes: Routes = [
     {path: '', component: HomeComponent},
     {path: 'lobby', component: LobbyComponent,
     resolve: {messages: ChatResolver, users: ListResolver, rooms: RoomResolver}},
+    {path: 'sendEmail', component: SendResetEmailComponent},
+    {path: 'resetPassword', component: ResetPasswordComponent},
     {path: 'signin', component: SignInComponent},
     {path: 'photo', component: PhotoEditorComponent, canActivate: [AuthGuard], resolve: {user: UserResolver}},
     {path: 'users', component: UsersListComponent, canActivate: [AuthGuard]},

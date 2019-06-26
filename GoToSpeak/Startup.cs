@@ -93,7 +93,8 @@ namespace GoToSpeak
                 opt.Password.RequireUppercase = false;
                 opt.Password.RequireNonAlphanumeric = false;
                 opt.Password.RequiredLength = 4;
-            });
+                opt.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultEmailProvider;
+            }).AddDefaultTokenProviders();
             builder = new IdentityBuilder(builder.UserType, typeof(Role), builder.Services);
             builder.AddEntityFrameworkStores<DataContext>();
             builder.AddRoleManager<RoleManager<Role>>();
@@ -153,6 +154,7 @@ namespace GoToSpeak
                 opt.Lockout.MaxFailedAccessAttempts = 3;
                 opt.Lockout.AllowedForNewUsers = true;
             });
+            //services.AddIdentity<User,UserRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, Seed seed)
