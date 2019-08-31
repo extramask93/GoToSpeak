@@ -157,13 +157,9 @@ namespace GoToSpeak.Migrations
 
                     b.Property<int>("RoleId");
 
-                    b.Property<int?>("UserId1");
-
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("AspNetUserRoles");
                 });
@@ -257,7 +253,7 @@ namespace GoToSpeak.Migrations
                     b.HasOne("GoToSpeak.Models.User", "User")
                         .WithMany("Logs")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("GoToSpeak.Models.Message", b =>
@@ -284,14 +280,10 @@ namespace GoToSpeak.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("GoToSpeak.Models.User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("GoToSpeak.Models.User", "User")
                         .WithMany("UserRoles")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("GoToSpeak.Room", b =>

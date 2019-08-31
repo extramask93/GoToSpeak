@@ -10,7 +10,7 @@ import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
 import { ErrorInterceptorProvider } from './_services/error.interceptor';
 import { AlertifyService } from './_services/alertify.service';
-import { BsDropdownModule } from 'ngx-bootstrap';
+import { BsDropdownModule, ModalModule } from 'ngx-bootstrap';
 import { RouterModule } from '@angular/router';
 import { appRoutes } from './routes';
 import { AuthGuard } from './_guards/auth.guard';
@@ -50,6 +50,7 @@ import { SignInMfaComponent } from './sign-in/sign-in-mfa/sign-in-mfa.component'
 import { MfaSetupComponent } from './photo-editor/mfa-setup/mfa-setup.component';
 import { AccountManagementService } from './_services/account-management.service';
 import { LogViewerComponent } from './admin/log-viewer/log-viewer.component';
+import { RolesModalComponent } from './admin/roles-modal/roles-modal.component';
 
 export function tokenGetter() {
    return localStorage.getItem('token');
@@ -82,10 +83,12 @@ export function tokenGetter() {
       ResetPasswordComponent,
       SignInMfaComponent,
       MfaSetupComponent,
-      LogViewerComponent
+      LogViewerComponent,
+      RolesModalComponent
    ],
    imports: [
       BrowserModule,
+      ModalModule.forRoot(),
       AppRoutingModule,
       HttpClientModule,
       FormsModule,
@@ -122,6 +125,9 @@ export function tokenGetter() {
    ],
    bootstrap: [
       AppComponent
+   ],
+   entryComponents: [
+      RolesModalComponent
    ]
 })
 export class AppModule { }

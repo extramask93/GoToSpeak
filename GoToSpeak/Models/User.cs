@@ -13,10 +13,10 @@ namespace GoToSpeak.Models
         public DateTime LastActive { get;set; }
         public string PhotoUrl { get; set; }
         public string PhotoPublicID {get; set;}
-        public ICollection<Message> MessagesSent { get; set; }
-        public ICollection<Message> MessagesReceived { get; set; }
+        public virtual ICollection<Message> MessagesSent { get; set; }
+        public virtual ICollection<Message> MessagesReceived { get; set; }
         public virtual ICollection<Room> Rooms { get; set; }
-        public ICollection<UserRole> UserRoles { get; set;}
-        public ICollection<Log> Logs { get; set; }
+        public virtual ICollection<UserRole> UserRoles { get; set;}
+        public virtual ICollection<Log> Logs { get; set; }
     }
 }

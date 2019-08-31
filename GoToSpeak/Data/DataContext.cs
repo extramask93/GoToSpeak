@@ -22,16 +22,19 @@ namespace GoToSpeak.Data
 
         protected override void OnModelCreating(ModelBuilder builder) {
             base.OnModelCreating(builder);
-            builder.Entity<UserRole>(userRole => {
+              builder.Entity<UserRole>(userRole => 
+            {
                 userRole.HasKey(ur => new {ur.UserId, ur.RoleId});
+
                 userRole.HasOne(ur => ur.Role)
-                .WithMany(r => r.UserRoles)
-                .HasForeignKey(ur => ur.RoleId)
-                .IsRequired();
-                userRole.HasOne(ur => ur.Role)
-                .WithMany(r => r.UserRoles)
-                .HasForeignKey(ur => ur.RoleId)
-                .IsRequired();
+                    .WithMany(r => r.UserRoles)
+                    .HasForeignKey(ur => ur.RoleId)
+                    .IsRequired();
+
+                userRole.HasOne(ur => ur.User)
+                    .WithMany(r => r.UserRoles)
+                    .HasForeignKey(ur => ur.UserId)
+                    .IsRequired();
             });
             builder.Entity<Message>()
             .HasOne(u => u.Sender)

@@ -14,7 +14,7 @@
   </form>
   </div>
   <div class="col-sm-4"><a [routerLink]="" (click)="this.showAuthenticator()">Show authenticator</a><br>
-  <img *ngIf="this.codes.authenticatorUri" src="https://www.google.com/chart?chs=200x200&chld=M|0&cht=qr&chl={{this.codes.authenticatorUri}}" alt="Qr code">
+  <img *ngIf="this.codes.authenticatorUri"  src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{this.codes.authenticatorUri}}" alt="Qr code">
   </div>
 </div>
 </div>

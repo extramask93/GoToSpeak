@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { User } from '../_models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -13,5 +14,8 @@ getUsersWithRoles() {
 }
 getLogs(params: HttpParams) {
   return this.http.get(this.baseUrl + 'admin/logs', {params});
+}
+updateUserRoles(user: User, roles: {}) {
+  return this.http.post(this.baseUrl + 'admin/editRoles/' + user.userName, roles);
 }
 }
