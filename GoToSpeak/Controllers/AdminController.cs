@@ -7,19 +7,24 @@ using Microsoft.EntityFrameworkCore;
 using GoToSpeak.Dtos;
 using Microsoft.AspNetCore.Identity;
 using GoToSpeak.Models;
+using AutoMapper;
+using System.Collections.Generic;
+using System;
 
 namespace GoToSpeak.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/admin")]
     public class AdminController : ControllerBase
     {
         public DataContext _context { get; set; }
         public UserManager<User> _userManager { get; set; }
-        public AdminController(DataContext context, UserManager<User> userManager)
+        private readonly IMapper _mapper;
+        public AdminController(DataContext context, UserManager<User> userManager, IMapper mapper)
         {
             _userManager = userManager;
             _context = context;
+            _mapper = mapper;
 
         }
         [Authorize(Policy = "RequireAdminRole")]
@@ -59,6 +64,22 @@ namespace GoToSpeak.Controllers
                 return BadRequest("Failed to remove the roles");
             }
             return Ok(await _userManager.GetRolesAsync(user));
+        }
+        [Authorize(Policy = "RequireAdminRole")]
+        [HttpGet("logs")]
+        public IActionResult GetLogs([FromQuery]FilterDto filters) {
+
+            Func<IQueryable<Log>,FilterDto, List<Log>> filterData = (logz, filterz) => {
+                var filteredLogz = logz.Include(u => u.User).Where((log) => log.Timestamp >= filterz.MinDate );
+                filteredLogz = filteredLogz.Where((log) => log.UserId.Equals(filterz.UserId ?? log.UserId));
+                filteredLogz = filteredLogz.Where((log) => log.Level >= filterz.Severity);
+                return filteredLogz.ToList();
+            };
+
+            var logs = _context.Logs.Include(u => u.User);
+            var filteredLogs = filterData(logs,filters);
+            var logsToReturn = _mapper.Map<IEnumerable<LogToReturnDto>>(filteredLogs);
+            return Ok(logsToReturn);
         }
     }
 }

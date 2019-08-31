@@ -39,6 +39,21 @@ login(model: any) {
     })
   );
 }
+login2fa(model: any) {
+  return this.http.post(this.baseUrl + 'auth/login2fa', model)
+    .pipe(
+    map((response: any) => {
+      const user = response;
+      if (user) {
+        localStorage.setItem('token', user.token);
+        localStorage.setItem('user', JSON.stringify(user.user));
+        this.decodedToken = this.jwtHelper.decodeToken(user.token);
+        this.currentUser = user.user;
+        this.changeMemberPhoto(this.currentUser.photoUrl);
+      }
+    })
+  );
+}
 register(model: any) {
   return this.http.post(this.baseUrl + 'auth/register', model);
 }

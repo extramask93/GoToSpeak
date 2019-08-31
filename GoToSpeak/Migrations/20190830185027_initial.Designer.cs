@@ -9,14 +9,34 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GoToSpeak.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20190622163401_identity")]
-    partial class identity
+    [Migration("20190830185027_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
+
+            modelBuilder.Entity("GoToSpeak.Models.Log", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("Level");
+
+                    b.Property<string>("Message");
+
+                    b.Property<DateTime>("Timestamp");
+
+                    b.Property<int>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Logs");
+                });
 
             modelBuilder.Entity("GoToSpeak.Models.Message", b =>
                 {
@@ -111,6 +131,8 @@ namespace GoToSpeak.Migrations
                     b.Property<string>("PhotoPublicID");
 
                     b.Property<string>("PhotoUrl");
+
+                    b.Property<string>("RefreshToken");
 
                     b.Property<string>("SecurityStamp");
 
@@ -230,6 +252,14 @@ namespace GoToSpeak.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("GoToSpeak.Models.Log", b =>
+                {
+                    b.HasOne("GoToSpeak.Models.User", "User")
+                        .WithMany("Logs")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("GoToSpeak.Models.Message", b =>

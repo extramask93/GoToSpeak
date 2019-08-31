@@ -1,0 +1,20 @@
+<div class="container">
+<div class="row">
+  <div class="col-sm-4">Multi factor authorization:</div>
+  <div class="col-sm-4">
+    <form #codeForm="ngForm" (ngSubmit)="this.validateCode()" >
+    <div *ngIf="this.mfaState.is2faEnabled === false" class="form-group">
+      <input type="text" class="form-control" required name="code" [(ngModel)]="this.codes.code" placeholder="code">
+    </div>
+    <div class="form-group text-center">
+        <button [disabled]="!codeForm.valid" class="btn btn-primary" type="submit">
+          {{this.mfaState.is2faEnabled === true ? "Disable" : "Enable"}}
+        </button>
+    </div>
+  </form>
+  </div>
+  <div class="col-sm-4"><a [routerLink]="" (click)="this.showAuthenticator()">Show authenticator</a><br>
+  <img *ngIf="this.codes.authenticatorUri" src="https://www.google.com/chart?chs=200x200&chld=M|0&cht=qr&chl={{this.codes.authenticatorUri}}" alt="Qr code">
+  </div>
+</div>
+</div>

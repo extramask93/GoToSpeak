@@ -16,6 +16,8 @@ import { AdminPanelComponent } from './admin/admin-panel/admin-panel.component';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { SendResetEmailComponent } from './sign-in/send-reset-email/send-reset-email.component';
 import { ResetPasswordComponent } from './sign-in/reset-password/reset-password.component';
+import { SignInMfaComponent } from './sign-in/sign-in-mfa/sign-in-mfa.component';
+import { MfaSetupComponent } from './photo-editor/mfa-setup/mfa-setup.component';
 
 export const appRoutes: Routes = [
     {path: '', component: HomeComponent},
@@ -24,12 +26,14 @@ export const appRoutes: Routes = [
     {path: 'sendEmail', component: SendResetEmailComponent},
     {path: 'resetPassword', component: ResetPasswordComponent},
     {path: 'signin', component: SignInComponent},
+    {path: 'signin2fa', component: SignInMfaComponent},
     {path: 'photo', component: PhotoEditorComponent, canActivate: [AuthGuard], resolve: {user: UserResolver}},
     {path: 'users', component: UsersListComponent, canActivate: [AuthGuard]},
     {path: 'members', component: MemberListComponent, canActivate: [AuthGuard],
      resolve: {users: MemberListResolver, messages: MessagesResolver}},
     {path: 'welcome', component: WelcomeComponent},
     {path: 'admin', component: AdminPanelComponent, canActivate: [AuthGuard], data: {roles: ['Admin', 'Moderator']}},
+    {path: 'mfa', component: MfaSetupComponent, canActivate: [AuthGuard]},
     {path: '**', redirectTo: '', pathMatch: 'full'}
 ];
 

@@ -18,6 +18,7 @@ namespace GoToSpeak.Data
         }
         public DbSet<Message> Messages { get; set; }
         public DbSet<Room> Rooms {get; set;}
+        public DbSet<Log> Logs {get; set;}
 
         protected override void OnModelCreating(ModelBuilder builder) {
             base.OnModelCreating(builder);
@@ -41,6 +42,11 @@ namespace GoToSpeak.Data
             .HasOne(u => u.Recipient)
             .WithMany(u => u.MessagesReceived)
             .OnDelete(DeleteBehavior.Restrict);
+            
+            builder.Entity<Log>()
+            .HasOne(l => l.User)
+            .WithMany(u => u.Logs)
+            .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

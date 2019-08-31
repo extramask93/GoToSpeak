@@ -19,12 +19,22 @@ namespace GoToSpeak.Data
             this._context = _context;
             _UserManager = userManager;
         }
+        public void SeedLogs()
+        {
+            var user = _context.Users.FirstOrDefault();
+            if(!_context.Logs.Any()) {
+                Log log = new Log { UserId = user.Id,Timestamp = DateTime.Now, Message="User A has been blocked due to too many login attempts", Level=3};
+                _context.Logs.Add(log);
+                _context.SaveChanges();
+            }
+        }
         public void SeedRooms()
         {
             if (!_context.Rooms.Any())
             {
                 Room room = new Room { Name = "Lobby" };
-                _context.Rooms.Add(room);
+                //_context.Rooms.Add(room);
+                //_context.SaveChanges();
             }
         }
         public void SeedUsers()
@@ -49,7 +59,8 @@ namespace GoToSpeak.Data
                 }
                 var adminUser = new User
                 {
-                    UserName = "Admin"
+                    UserName = "Admin",
+                    Email = "jozwiak.damian02@gmail.com"
                 };
                 IdentityResult result = _UserManager.CreateAsync(adminUser,"password").Result;
                 if(result.Succeeded) {

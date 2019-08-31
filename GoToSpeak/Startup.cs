@@ -41,7 +41,24 @@ namespace GoToSpeak
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DataContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(Options=> {
+            IdentityBuilder builder = services.AddIdentityCore<User>(opt => {
+                opt.Password.RequireDigit = false;
+                opt.Password.RequireUppercase = false;
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequiredLength = 4;
+                opt.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultEmailProvider;
+            }).AddDefaultTokenProviders();
+            builder = new IdentityBuilder(builder.UserType, typeof(Role), builder.Services);
+            builder.AddEntityFrameworkStores<DataContext>();
+            builder.AddRoleManager<RoleManager<Role>>();
+            builder.AddRoleValidator<RoleValidator<Role>>();
+            builder.AddSignInManager<SignInManager<User>>();
+            services.AddMvc(opt => {
+                var policy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+                opt.Filters.Add(new AuthorizeFilter(policy));
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(Options=> {
                 Options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
             services.BuildServiceProvider().GetService<DataContext>().Database.Migrate();
@@ -50,9 +67,8 @@ namespace GoToSpeak
             services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
             services.AddTransient<Seed>();
             services.AddScoped<IAuthRepository, AuthRepository>();
-            services.AddScoped<IChatRepository, ChatRepository>();
-            //services.AddTransient<ChatRepository>();   	
-            services.AddSignalR().AddAzureSignalR("Endpoint=https://gts-signalr-service.service.signalr.net;AccessKey=SClx7j8kb1lxiBO7RPzrKVQuD+2rFSsmG5+1KNdWWow=;Version=1.0;");
+            services.AddScoped<IChatRepository, ChatRepository>();	
+            services.AddSignalR().AddAzureSignalR("Endpoint=https://gtsp.service.signalr.net;AccessKey=Znq+2X6iU2ekZDSbDdGXfyf7KuGXdNs6p3yvEjaj5pw=;Version=1.0;");
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options => {
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -80,8 +96,25 @@ namespace GoToSpeak
                             context.Token = token;
                         }
                         return Task.CompletedTask;
-                    }                    
+                    },   
+                    OnAuthenticationFailed = context =>
+                    {
+                        if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                        {
+                            context.Response.Headers.Add("Token-Expired", "true");
+                        }
+                        return Task.CompletedTask;
+                    }                
                 };
+            });
+            services.AddAuthorization(options => {
+                options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+                options.AddPolicy("ModerateRole", policy => policy.RequireRole("Admin","Moderator"));
+            });
+            services.Configure<IdentityOptions>(opt => {
+                opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                opt.Lockout.MaxFailedAccessAttempts = 3;
+                opt.Lockout.AllowedForNewUsers = true;
             });
         }
 
@@ -154,7 +187,6 @@ namespace GoToSpeak
                 opt.Lockout.MaxFailedAccessAttempts = 3;
                 opt.Lockout.AllowedForNewUsers = true;
             });
-            //services.AddIdentity<User,UserRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, Seed seed)
@@ -180,7 +212,8 @@ namespace GoToSpeak
             }
             app.UseHttpsRedirection();
             seed.SeedUsers();
-            seed.SeedRooms();        
+            seed.SeedRooms(); 
+            seed.SeedLogs();       
             app.UseDefaultFiles();
             app.UseStaticFiles(); 
             app.UseCors(builder =>
@@ -189,7 +222,12 @@ namespace GoToSpeak
                             .AllowAnyHeader()
                             .AllowCredentials());
             app.UseAuthentication();
-            app.UseSignalR(routes =>{routes.MapHub<MessageHub>("/temp");});
+            if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production") {
+                app.UseAzureSignalR(routes =>{routes.MapHub<MessageHub>("/temp");});
+            }
+            else {
+                app.UseSignalR(routes =>{routes.MapHub<MessageHub>("/temp");});
+            }
             app.UseMvc(routes => {
                 routes.MapSpaFallbackRoute(
                     name: "spa-fallback",

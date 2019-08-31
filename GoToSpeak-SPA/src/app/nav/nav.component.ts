@@ -23,8 +23,12 @@ export class NavComponent implements OnInit {
       this.alertify.success('logged in successfully');
     },
     error => {
-      this.router.navigate(['/signin']);
-      this.alertify.error(error);
+      if(error.code === 101) {
+        this.router.navigate(['/signin2fa']);
+      } else {
+        this.router.navigate(['/signin']);
+      }
+      this.alertify.error(error.message);
     },
     () => {this.router.navigate(['/members']); }
     );

@@ -1,0 +1,21 @@
+<div class="section-logs">
+  <h2>Logs</h2>
+
+  <div id="constrainer2">
+      <table  cellpadding="0" cellspacing="0" width="100%" class="scrollTable">
+          <thead class="fixedHeader">
+            <th>Level</th><th>Date</th><th>User</th><th>Content</th>
+          </thead>
+          <tbody class="scrollContent">
+              <tr *ngFor="let log of logs" [ngClass]="{'black_color': log.level==1, 'yellow_color': log.level == 2, 'red_color': log.level==3}">
+                <td >{{log.level}}</td>
+                <td >{{log.timestamp | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                <td>{{log.user}}</td>
+                <td>{{log.message}}</td>
+              </tr>
+
+          </tbody>
+      </table>
+  </div>
+
+</div>
