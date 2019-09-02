@@ -1,6 +1,26 @@
 <div class="section-logs mt-5">
   <h2>Logs</h2>
-
+  <form class="row" #ngForm="ngForm" id="filtersForm">
+    <div class="form-group mr-5">
+      <select name = "first" [(ngModel)]="this.level" class="form-control" name="severity">
+          <option value="1">Level 1</option>
+          <option value="2">Level 2</option>
+          <option value="3">Level 3</option>
+      </select>
+    </div>
+    <div class="form-group mr-5">
+        <input name = "second" [(ngModel)]="this.nameFilter" class="form-control" type="text" name="name_filter" placeholder="*">
+    </div>
+      <div class="form-group mr-2">
+        <input name = "third" class="form-control" #drp="bsDaterangepicker" bsDaterangepicker [(ngModel)]="bsRangeValue">
+      </div>
+      <div class="form-group mr-5">
+        <button class="btn btn-info" (click)="drp.toggle()" [attr.aria-expanded]="drp.isOpen">Date Range Picker</button>
+      </div>
+      <div class="form-group">
+          <button class="btn btn-success" form="filtersForm" (click)="this.applyFilters()">Apply</button>
+      </div>       
+  </form>
   <div id="constrainer2">
       <table  cellpadding="0" cellspacing="0" width="100%" class="scrollTable">
           <thead class="fixedHeader">

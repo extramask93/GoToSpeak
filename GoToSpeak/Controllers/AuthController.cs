@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Security.Claims;
@@ -14,6 +15,7 @@ using GoToSpeak.Data;
 using GoToSpeak.Dtos;
 using GoToSpeak.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -25,7 +27,6 @@ using SendGrid.Helpers.Mail;
 
 namespace GoToSpeak.Controllers
 {
-    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -47,6 +48,29 @@ namespace GoToSpeak.Controllers
             _config = config;
             _mapper = mapper;
         }
+
+        [HttpPost("resetLogged")]
+        public async Task<IActionResult> ResetPasswordWhileLoggedIn(PasswordForResetDto passwordForReset)
+        {
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var user = await _userManager.FindByIdAsync(userId);
+            if(passwordForReset.Password != passwordForReset.ConfirmPassword)
+            {
+                return BadRequest("Passwords must be the same");
+            }
+            if(await _userManager.CheckPasswordAsync(user, passwordForReset.OldPassword) == false)
+            {
+                return BadRequest("Old password does not match");
+            }
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, token, passwordForReset.Password);
+            if(result.Succeeded)
+            {
+                return Ok(new { message = "Password has been changed" });
+            }
+            return BadRequest("Something went wrong");
+        }
+        [AllowAnonymous]
         [HttpPost("emailReset")]
         public async Task<IActionResult> SendPasswordResetLink(UserNameDto userName)
         {
@@ -60,6 +84,7 @@ namespace GoToSpeak.Controllers
             SendEmail(user.Email, "Here is your reset link: " + resetLink);
             return Ok(new { message = "Reset password link has been sent to your email" });
         }
+        [AllowAnonymous]
         [HttpPost("reset")]
         public async Task<IActionResult> ResetPassword(PasswordForResetDto passwordForReset)
         {
@@ -75,6 +100,7 @@ namespace GoToSpeak.Controllers
             }
             return BadRequest();
         }
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
         {
@@ -88,6 +114,7 @@ namespace GoToSpeak.Controllers
             }
             return BadRequest(result.Errors);
         }
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto UserForLoginDto)
         {
@@ -130,9 +157,9 @@ namespace GoToSpeak.Controllers
             }
 
             var user = await _userManager.FindByNameAsync(model.UserName);
-            if (user == null)
+             if (user == null)
             {
-                return BadRequest($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return BadRequest("User does not exist");
             }
 
             var authenticatorCode = model.TwoFactorCode.Replace(" ", string.Empty).Replace("-", string.Empty);
@@ -146,7 +173,24 @@ namespace GoToSpeak.Controllers
                 return BadRequest(string.Format(
                     "Username or PIN code is incorrect, there are {0} tries left before a lockout", attemptsLeft.ToString()));
             }
-            return Ok();
+            var result2 = await _signInManager.CheckPasswordSignInAsync(user, model.Password, true);
+            if (result2.IsLockedOut)
+            {
+                return BadRequest(string.Format("Account has been locked for 5 minutes due to multiple failed login attemts"));
+            }
+            if (result2.Succeeded)
+            {
+                user.RefreshToken = GenerateRefreshToken();
+                var token = GenerateJwtToken(user).Result;
+                var userToReturn = _mapper.Map<UserForListDto>(user);
+                _logger.LogWarning("User with id={userId} has logged in", userToReturn.Id);
+                var updateResult = await _userManager.UpdateAsync(user);
+                return Ok(new { token = token, user = userToReturn, refreshToken = user.RefreshToken });
+            }
+            int accessFailedCount2 = await _userManager.GetAccessFailedCountAsync(user);
+            int attemptsLeft2 = 3 -
+                        accessFailedCount2;
+            return BadRequest(string.Format("Username or password is incorrect, there are {0} tries left before a lockout", attemptsLeft2.ToString()));
         }
         [HttpPost]
         [AllowAnonymous]
@@ -157,7 +201,7 @@ namespace GoToSpeak.Controllers
                 return BadRequest(model);
             }
 
-            var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+            var user = await _userManager.FindByNameAsync(model.UserName);
             if (user == null)
             {
                 throw new ApplicationException($"Unable to load two-factor authentication user.");
@@ -170,7 +214,11 @@ namespace GoToSpeak.Controllers
             if (result.Succeeded)
             {
                 _logger.LogInformation("User with ID {UserId} logged in with a recovery code.", user.Id);
-                return Ok();
+                user.RefreshToken = GenerateRefreshToken();
+                var token = GenerateJwtToken(user).Result;
+                var userToReturn = _mapper.Map<UserForListDto>(user);
+                _logger.LogWarning("User with id={userId} has logged in", userToReturn.Id);
+                return Ok(new { token = token, user = userToReturn, refreshToken = user.RefreshToken });
             }
             if (result.IsLockedOut)
             {
@@ -180,7 +228,6 @@ namespace GoToSpeak.Controllers
             else
             {
                 _logger.LogWarning("Invalid recovery code entered for user with ID {UserId}", user.Id);
-                ModelState.AddModelError(string.Empty, "Invalid recovery code entered.");
                 return BadRequest();
             }
         }

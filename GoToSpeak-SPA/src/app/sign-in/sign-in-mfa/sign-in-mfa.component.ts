@@ -24,7 +24,7 @@ export class SignInMfaComponent implements OnInit {
       this.alertify.error(error);
       this.info = error;
     },
-    () => {this.router.navigate(['/members']); }
+    () => {this.router.navigate(['/settings']); }
     );
   }
 

@@ -71,9 +71,11 @@ namespace GoToSpeak.Controllers
         public IActionResult GetLogs([FromQuery]FilterDto filters) {
 
             Func<IQueryable<Log>,FilterDto, List<Log>> filterData = (logz, filterz) => {
-                var filteredLogz = logz.Include(u => u.User).Where((log) => log.Timestamp >= filterz.MinDate );
-                filteredLogz = filteredLogz.Where((log) => log.UserId.Equals(filterz.UserId ?? log.UserId));
-                filteredLogz = filteredLogz.Where((log) => log.Level >= filterz.Severity);
+                var filteredLogz = logz.Where((log) => log.Level >= filterz.Level);;
+                if(filterz.MinDate != filterz.MaxDate)
+                    filteredLogz = filteredLogz.Where((log) => log.Timestamp >= filterz.MinDate && log.Timestamp <= filterz.MaxDate);
+                if(filterz.Name != null && filterz.Name != "")
+                    filteredLogz = filteredLogz.Where((log) => log.User.UserName.Contains(filterz.Name));
                 return filteredLogz.ToList();
             };
 

@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { ChatService } from '../_services/chat.service';
-import { User } from '../_models/user';
-import { AuthService } from '../_services/auth.service';
-import { AlertifyService } from '../_services/alertify.service';
+
 import { FileUploader } from 'ng2-file-upload';
 import { environment } from 'src/environments/environment';
-import { Photo } from '../_models/photo';
 import { ActivatedRoute } from '@angular/router';
+import { ChatService } from 'src/app/_services/chat.service';
+import { AuthService } from 'src/app/_services/auth.service';
+import { AlertifyService } from 'src/app/_services/alertify.service';
+import { Photo } from 'src/app/_models/photo';
+
 @Component({
   selector: 'app-photo-editor',
   templateUrl: './photo-editor.component.html',

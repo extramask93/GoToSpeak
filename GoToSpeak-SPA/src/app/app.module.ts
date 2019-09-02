@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -10,7 +11,7 @@ import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
 import { ErrorInterceptorProvider } from './_services/error.interceptor';
 import { AlertifyService } from './_services/alertify.service';
-import { BsDropdownModule, ModalModule } from 'ngx-bootstrap';
+import { BsDropdownModule, ModalModule, TabsModule, BsDatepickerModule } from 'ngx-bootstrap';
 import { RouterModule } from '@angular/router';
 import { appRoutes } from './routes';
 import { AuthGuard } from './_guards/auth.guard';
@@ -23,7 +24,6 @@ import { MessagesResolver } from './_resolvers/messages.resolver.';
 import { MemberMessagesComponent } from './members/member-messages/member-messages.component';
 import { SignalRService } from './_services/signalR.service';
 import { UsersListComponent } from './users-list/users-list.component';
-import { PhotoEditorComponent } from './photo-editor/photo-editor.component';
 import { FileUploadModule } from 'ng2-file-upload';
 import { UserResolver } from './_resolvers/user.resolver';
 import { TimeAgoPipe } from 'time-ago-pipe';
@@ -47,10 +47,15 @@ import { SignInComponent } from './sign-in/sign-in.component';
 import { SendResetEmailComponent } from './sign-in/send-reset-email/send-reset-email.component';
 import { ResetPasswordComponent } from './sign-in/reset-password/reset-password.component';
 import { SignInMfaComponent } from './sign-in/sign-in-mfa/sign-in-mfa.component';
-import { MfaSetupComponent } from './photo-editor/mfa-setup/mfa-setup.component';
+
 import { AccountManagementService } from './_services/account-management.service';
 import { LogViewerComponent } from './admin/log-viewer/log-viewer.component';
 import { RolesModalComponent } from './admin/roles-modal/roles-modal.component';
+import { MfaSetupComponent } from './settings/mfa-setup/mfa-setup.component';
+import { SettingsComponent } from './settings/settings.component';
+import { PhotoEditorComponent } from './settings/photo-editor/photo-editor.component';
+import { MfaRecoveryCodesComponent } from './settings/mfa-recovery-codes/mfa-recovery-codes.component';
+import { PasswordChangeComponent } from './settings/password-change/password-change.component';
 
 export function tokenGetter() {
    return localStorage.getItem('token');
@@ -82,13 +87,19 @@ export function tokenGetter() {
       SendResetEmailComponent,
       ResetPasswordComponent,
       SignInMfaComponent,
+      SettingsComponent,
       MfaSetupComponent,
+      MfaRecoveryCodesComponent,
+      PasswordChangeComponent,
       LogViewerComponent,
-      RolesModalComponent
+      RolesModalComponent,
    ],
    imports: [
       BrowserModule,
+      BrowserAnimationsModule,
       ModalModule.forRoot(),
+      TabsModule.forRoot(),
+      BsDatepickerModule.forRoot(),
       AppRoutingModule,
       HttpClientModule,
       FormsModule,

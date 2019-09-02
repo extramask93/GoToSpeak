@@ -60,7 +60,8 @@ namespace GoToSpeak.Data
                 var adminUser = new User
                 {
                     UserName = "Admin",
-                    Email = "jozwiak.damian02@gmail.com"
+                    Email = "jozwiak.damian02@gmail.com",
+                    PhotoUrl = "https://res.cloudinary.com/dbxqf9dsq/image/upload/v1560411581/user_ddvo0l.png"
                 };
                 IdentityResult result = _UserManager.CreateAsync(adminUser,"password").Result;
                 if(result.Succeeded) {

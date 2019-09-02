@@ -29,13 +29,10 @@ export class MfaSetupComponent implements OnInit {
     error => this.alrtify.error(error));
   }
   validateCode() {
+    if (false === this.mfaState.is2faEnabled) {
     this.mfaService.enableAuth(this.codes).subscribe(() => this.refreshState(), error => this.alrtify.error(error));
-  }
-  switchMfaState() {
-    if (true === this.mfaState.is2faEnabled) {
-      this.mfaService.disableMfa().subscribe(() => this.refreshState(),
-       error => this.alrtify.error(error));
-    } else {    
+    } else {
+      this.mfaService.disableMfa().subscribe((x) => {this.alrtify.success(x['message']); this.refreshState(); }, error => this.alrtify.error(error));
     }
   }
 }

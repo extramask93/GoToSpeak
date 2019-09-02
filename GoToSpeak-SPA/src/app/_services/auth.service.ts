@@ -67,6 +67,10 @@ sendEmail(model: any) {
 resetPassword(model: any) {
   return this.http.post(this.baseUrl + 'auth/reset', model);
 }
+resetPasswordLoggedIn(model: any)
+{
+  return this.http.post(this.baseUrl + 'auth/resetLogged', model);
+}
 roleMatch(allowedRoles): boolean {
   let isMatch = false;
   const userRoles = this.decodedToken.role as Array<string>;

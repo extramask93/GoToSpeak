@@ -65,9 +65,8 @@ namespace GoToSpeak.Controllers
             {
                 return BadRequest($"Unexpected error occured disabling 2FA for user with ID '{user.Id}'.");
             }
-
             _logger.LogInformation("User with ID {UserId} has disabled 2fa.", user.Id);
-            return RedirectToAction(nameof(TwoFactorAuthentication));
+            return Ok(new {Message= "disabled"});
         }
 
         [HttpGet("enableauth")]
@@ -137,7 +136,7 @@ namespace GoToSpeak.Controllers
             return RedirectToAction(nameof(EnableAuthenticator));
         }
 
-        [HttpGet]
+        /* [HttpGet]
         public async Task<IActionResult> GenerateRecoveryCodesWarning()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -152,7 +151,7 @@ namespace GoToSpeak.Controllers
             }
 
             return Ok(nameof(GenerateRecoveryCodes));
-        }
+        }*/
 
         [HttpPost("generatecodes")]
         public async Task<IActionResult> GenerateRecoveryCodes()
@@ -171,9 +170,8 @@ namespace GoToSpeak.Controllers
             var recoveryCodes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10);
             _logger.LogInformation("User with ID {UserId} has generated new 2FA recovery codes.", user.Id);
 
-            var model = new ShowRecoveryCodesDto { RecoveryCodes = recoveryCodes.ToArray() };
 
-            return Ok(model);
+            return Ok(new {codes = recoveryCodes.ToList()});
         }
 
 
