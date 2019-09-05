@@ -74,12 +74,10 @@ namespace GoToSpeak.Controllers
                 var filteredLogz = logz.Where((log) => log.Level >= filterz.Level);;
                 if(filterz.MinDate != filterz.MaxDate)
                     filteredLogz = filteredLogz.Where((log) => log.Timestamp >= filterz.MinDate && log.Timestamp <= filterz.MaxDate);
-                if(filterz.Name != null && filterz.Name != "")
-                    filteredLogz = filteredLogz.Where((log) => log.User.UserName.Contains(filterz.Name));
                 return filteredLogz.ToList();
             };
 
-            var logs = _context.Logs.Include(u => u.User);
+            var logs = _context.Logs;
             var filteredLogs = filterData(logs,filters);
             var logsToReturn = _mapper.Map<IEnumerable<LogToReturnDto>>(filteredLogs);
             return Ok(logsToReturn);

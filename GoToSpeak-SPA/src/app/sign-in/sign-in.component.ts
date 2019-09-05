@@ -21,13 +21,12 @@ export class SignInComponent implements OnInit {
       this.alertify.success('logged in successfully');
     },
     error => {
-      if(error.code === 101) {
+      if (error.includes('factor')) {
         this.router.navigate(['/signin2fa']);
-        this.alertify.error(error.message);
-      }
-      else {
         this.alertify.error(error);
-        this.info = error.message;
+      } else {
+        this.alertify.error(error);
+        this.info = error;
       }
     },
     () => {this.router.navigate(['/members']); }

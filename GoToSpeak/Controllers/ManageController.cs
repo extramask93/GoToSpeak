@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using GoToSpeak.Helpers;
+
 namespace GoToSpeak.Controllers
 {
     [Route("api/[controller]")]
@@ -14,13 +16,13 @@ namespace GoToSpeak.Controllers
     public class ManageController : ControllerBase
     {
         private readonly UserManager<User> _userManager;
-        private readonly ILogger<ManageController> _logger;
+        private readonly IDbLogger _logger;
         private readonly SignInManager<User> _signInManager;
         private readonly UrlEncoder _urlEncoder;
         private const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
         private const string RecoveryCodesKey = nameof(RecoveryCodesKey);
-        public ManageController(UserManager<User> userManager, ILogger<ManageController> logger,
-                                SignInManager<User> signInManager, UrlEncoder urlEncoder)
+        public ManageController(UserManager<User> userManager,
+                                SignInManager<User> signInManager, UrlEncoder urlEncoder, IDbLogger logger)
         {
             _logger = logger;
             _signInManager = signInManager;
@@ -65,7 +67,7 @@ namespace GoToSpeak.Controllers
             {
                 return BadRequest($"Unexpected error occured disabling 2FA for user with ID '{user.Id}'.");
             }
-            _logger.LogInformation("User with ID {UserId} has disabled 2fa.", user.Id);
+            _logger.LogInfo($"User {user.UserName} with has disabled 2fa.");
             return Ok(new {Message= "disabled"});
         }
 
@@ -80,7 +82,6 @@ namespace GoToSpeak.Controllers
 
             var model = new EnableAuthenticatorDto();
             await LoadSharedKeyAndQrCodeUriAsync(user, model);
-
             return Ok(model);
         }
 
@@ -112,7 +113,7 @@ namespace GoToSpeak.Controllers
             }
 
             await _userManager.SetTwoFactorEnabledAsync(user, true);
-            _logger.LogInformation("User with ID {UserId} has enabled 2FA with an authenticator app.", user.Id);
+            _logger.LogInfo($"User {user.UserName} with has enabled 2fa.");
 
             return Ok();
         }
@@ -131,7 +132,7 @@ namespace GoToSpeak.Controllers
 
             await _userManager.SetTwoFactorEnabledAsync(user, false);
             await _userManager.ResetAuthenticatorKeyAsync(user);
-            _logger.LogInformation("User with id '{UserId}' has reset their authentication app key.", user.Id);
+            _logger.LogInfo($"User {user.UserName} has reset their authentication app key.");
 
             return RedirectToAction(nameof(EnableAuthenticator));
         }
@@ -168,7 +169,7 @@ namespace GoToSpeak.Controllers
             }
 
             var recoveryCodes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10);
-            _logger.LogInformation("User with ID {UserId} has generated new 2FA recovery codes.", user.Id);
+            _logger.LogInfo($"User {user.UserName} has generated new 2FA recovery codes.");
 
 
             return Ok(new {codes = recoveryCodes.ToList()});

@@ -6,8 +6,8 @@ namespace GoToSpeak.Dtos
     {
             [Required]
             [DataType(DataType.Text)]
-            [Display(Name = "Recovery Code")]
             public string RecoveryCode { get; set; }
+            [Required]
             public string UserName { get; set; }
     }
 }

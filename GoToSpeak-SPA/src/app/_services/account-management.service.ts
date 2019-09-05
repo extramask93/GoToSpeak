@@ -31,6 +31,5 @@ enableAuth(model: MfaCodes) {
 }
 generateRecoveryCodes(): Observable<CodesArray> {
   return this.http.post<CodesArray>(this.baseUrl + 'manage/generatecodes', null);
-
 }
 }

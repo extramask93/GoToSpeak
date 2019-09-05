@@ -68,6 +68,8 @@ namespace GoToSpeak
             services.AddTransient<Seed>();
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IChatRepository, ChatRepository>();	
+            services.AddScoped<ILogRepository, LogRepository>();
+            services.AddScoped<IDbLogger, Logger>();
             services.AddSignalR().AddAzureSignalR("Endpoint=https://gtsp.service.signalr.net;AccessKey=Znq+2X6iU2ekZDSbDdGXfyf7KuGXdNs6p3yvEjaj5pw=;Version=1.0;");
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options => {
@@ -147,6 +149,8 @@ namespace GoToSpeak
             services.AddTransient<Seed>();
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IChatRepository, ChatRepository>();
+            services.AddScoped<ILogRepository, LogRepository>();
+            services.AddScoped<IDbLogger, Logger>();
             services.AddSignalR();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options => {

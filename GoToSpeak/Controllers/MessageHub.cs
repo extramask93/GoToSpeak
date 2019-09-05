@@ -87,25 +87,40 @@ namespace GoToSpeak.Controllers
             }
             Clients.Caller.NewMessage(messageViewModel);
         }
+        public void Kicked(MessageToReturnDto message)
+        {
+
+        }
         public void SendToRoom(string roomName, string message)
         {
             try
             {
-                var user = context.Users.Where(u => u.Id == Identity()).FirstOrDefault();
+                var user = _Connections.Where(u => u.Id == Identity()).FirstOrDefault();
                 var room = context.Rooms.Where(r => r.Name == roomName).FirstOrDefault();
+                if(message.StartsWith("/kick")) {
+                    var userToKickName = message.Split(' ')[1];
+                    var userToKick = _Connections.Where(u => u.UserName == userToKickName).FirstOrDefault();
+                    var userToKickConnections = _connectionsMapping.GetConnections(userToKick.Id);
+                    Clients.Group(user.CurrentRoom).RemoveUser(userToKick);
+                    foreach(var conn in userToKickConnections) {
+                        Groups.RemoveFromGroupAsync(conn, roomName);
+                    }       
+                }
+                else {
                 // Create and save message in database
-                Message msg = new Message()
-                {
-                    Content = Regex.Replace(message, @"(?i)<(?!img|a|/a|/img).*?>", String.Empty),
-                    MessageSent = DateTime.Now,
-                    SenderId = user.Id,
-                    ToRoom = room
-                };
-                context.Messages.Add(msg);
-                context.SaveChanges();
-                // Broadcast the message
-                var messageViewModel = mapper.Map<MessageToReturnDto>(msg);
-                Clients.Group(roomName).NewMessage(messageViewModel);
+                    Message msg = new Message()
+                    {
+                        Content = Regex.Replace(message, @"(?i)<(?!img|a|/a|/img).*?>", String.Empty),
+                        MessageSent = DateTime.Now,
+                        SenderId = user.Id,
+                        ToRoom = room
+                    };
+                    context.Messages.Add(msg);
+                    context.SaveChanges();
+                    // Broadcast the message
+                    var messageViewModel = mapper.Map<MessageToReturnDto>(msg);
+                    Clients.Group(roomName).NewMessage(messageViewModel);
+                }
             }
             catch (Exception)
             {

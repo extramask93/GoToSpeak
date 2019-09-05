@@ -13,6 +13,7 @@ using AutoMapper;
 using Google.Authenticator;
 using GoToSpeak.Data;
 using GoToSpeak.Dtos;
+using GoToSpeak.Helpers;
 using GoToSpeak.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -31,19 +32,21 @@ namespace GoToSpeak.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        private readonly ILogRepository _logRepository;
         private readonly IConfiguration _config;
         private readonly IMapper _mapper;
         public UserManager<User> _userManager { get; }
         public SignInManager<User> _signInManager { get; }
-        private readonly ILogger<AuthController> _logger;
         private readonly IConfiguration _configuration;
+        private readonly IDbLogger _logger;
 
-        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager,
-        IConfiguration config, IMapper mapper, ILogger<AuthController> logger, IConfiguration configuration)
+        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, ILogRepository logRepository,
+        IConfiguration config, IMapper mapper, IConfiguration configuration, IDbLogger logger)
         {
             _configuration = configuration;
             _logger = logger;
             _signInManager = signInManager;
+            _logRepository = logRepository;
             _userManager = userManager;
             _config = config;
             _mapper = mapper;
@@ -66,8 +69,10 @@ namespace GoToSpeak.Controllers
             var result = await _userManager.ResetPasswordAsync(user, token, passwordForReset.Password);
             if(result.Succeeded)
             {
+                _logger.LogInfo($"Passwor has been changed for user: {user.UserName}");
                 return Ok(new { message = "Password has been changed" });
             }
+            _logger.LogWarning($"Error occured during passoword reset for user: {user.UserName}");
             return BadRequest("Something went wrong");
         }
         [AllowAnonymous]
@@ -81,8 +86,15 @@ namespace GoToSpeak.Controllers
             }
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var resetLink = "https://localhost:4200/resetPassword?token=" + HttpUtility.UrlEncode(token);
-            SendEmail(user.Email, "Here is your reset link: " + resetLink);
-            return Ok(new { message = "Reset password link has been sent to your email" });
+
+            var result = SendEmail(user.Email, "Here is your reset link: " + resetLink);
+            if(result.StatusCode == HttpStatusCode.Accepted) {
+                _logger.LogInfo($"Password reset link has been sent to user: {userName}");
+                return Ok(new { message = "Reset password link has been sent to your email" });
+            }
+            _logger.LogWarning($"Error occured during reset email sending process for user: {userName}");
+            return BadRequest("Error occured during mail sending process");
+            
         }
         [AllowAnonymous]
         [HttpPost("reset")]
@@ -96,9 +108,11 @@ namespace GoToSpeak.Controllers
             var result = await _userManager.ResetPasswordAsync(user, passwordForReset.Token, passwordForReset.Password);
             if (result.Succeeded)
             {
+                _logger.LogInfo($"Passwor has been changed for user: {user.UserName}");
                 return Ok(new { message = "Password has been changed" });
             }
-            return BadRequest();
+            _logger.LogWarning($"Password reset failed for user {user.UserName}");
+            return BadRequest("Reset password failed");
         }
         [AllowAnonymous]
         [HttpPost("register")]
@@ -109,7 +123,7 @@ namespace GoToSpeak.Controllers
             var result = await _userManager.CreateAsync(userToCreate, userForRegisterDto.Password);
             if (result.Succeeded)
             {
-                _logger.LogWarning("User {userId} was registered", userForRegisterDto.Username);
+                _logger.LogWarning($"New user has been registered, with name: {userForRegisterDto.Username}");
                 return Ok(new { username = userToCreate.UserName });
             }
             return BadRequest(result.Errors);
@@ -120,31 +134,33 @@ namespace GoToSpeak.Controllers
         {
             var user = await _userManager.FindByNameAsync(UserForLoginDto.Username);
             if (user == null)
-            {
+            {         
+                _logger.LogWarning($"User with non-existing username: {UserForLoginDto.Username} tried to log in");
                 return BadRequest("User does not exist");
             }
             if (user.TwoFactorEnabled)
             {
-                return BadRequest(new {message="User requires 2 factor authorization",
-                code=101});
+                return BadRequest("User requires 2 factor authorization");
             }
             var result = await _signInManager.CheckPasswordSignInAsync(user, UserForLoginDto.Password, true);
             if (result.IsLockedOut)
             {
+                _logger.LogWarning($"Temporarly blocked user: {UserForLoginDto.Username} tried to log in");
                 return BadRequest(string.Format("Account has been locked for 5 minutes due to multiple failed login attemts"));
-            }
+            } 
             if (result.Succeeded)
             {
                 user.RefreshToken = GenerateRefreshToken();
                 var token = GenerateJwtToken(user).Result;
                 var userToReturn = _mapper.Map<UserForListDto>(user);
-                _logger.LogWarning("User with id={userId} has logged in", userToReturn.Id);
                 var updateResult = await _userManager.UpdateAsync(user);
+                _logger.LogInfo($"User {user.UserName} has logged in");
                 return Ok(new { token = token, user = userToReturn, refreshToken = user.RefreshToken });
             }
             int accessFailedCount = await _userManager.GetAccessFailedCountAsync(user);
             int attemptsLeft = 3 -
                         accessFailedCount;
+            _logger.LogWarning($"User: {UserForLoginDto.Username} tried to log in for the {accessFailedCount} time");
             return BadRequest(string.Format("Username or password is incorrect, there are {0} tries left before a lockout", attemptsLeft.ToString()));
         }
         [HttpPost("login2fa")]
@@ -183,7 +199,6 @@ namespace GoToSpeak.Controllers
                 user.RefreshToken = GenerateRefreshToken();
                 var token = GenerateJwtToken(user).Result;
                 var userToReturn = _mapper.Map<UserForListDto>(user);
-                _logger.LogWarning("User with id={userId} has logged in", userToReturn.Id);
                 var updateResult = await _userManager.UpdateAsync(user);
                 return Ok(new { token = token, user = userToReturn, refreshToken = user.RefreshToken });
             }
@@ -192,7 +207,7 @@ namespace GoToSpeak.Controllers
                         accessFailedCount2;
             return BadRequest(string.Format("Username or password is incorrect, there are {0} tries left before a lockout", attemptsLeft2.ToString()));
         }
-        [HttpPost]
+        [HttpPost("loginwithrecoverycode")]
         [AllowAnonymous]
         public async Task<IActionResult> LoginWithRecoveryCode(LoginWithRecoveryCodeDto model, string returnUrl = null)
         {
@@ -213,21 +228,17 @@ namespace GoToSpeak.Controllers
 
             if (result.Succeeded)
             {
-                _logger.LogInformation("User with ID {UserId} logged in with a recovery code.", user.Id);
                 user.RefreshToken = GenerateRefreshToken();
                 var token = GenerateJwtToken(user).Result;
                 var userToReturn = _mapper.Map<UserForListDto>(user);
-                _logger.LogWarning("User with id={userId} has logged in", userToReturn.Id);
                 return Ok(new { token = token, user = userToReturn, refreshToken = user.RefreshToken });
             }
             if (result.IsLockedOut)
             {
-                _logger.LogWarning("User with ID {UserId} account locked out.", user.Id);
                 return BadRequest();
             }
             else
             {
-                _logger.LogWarning("Invalid recovery code entered for user with ID {UserId}", user.Id);
                 return BadRequest();
             }
         }
@@ -306,7 +317,7 @@ namespace GoToSpeak.Controllers
 
         }
 
-        private void SendEmail(string to, string message)
+        private  Response SendEmail(string to, string message)
         {
             var client = new SendGridClient("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");
             var msg = new SendGridMessage()
@@ -317,6 +328,7 @@ namespace GoToSpeak.Controllers
             };
             msg.AddTo(new EmailAddress(to));
             var response = client.SendEmailAsync(msg).Result;
+            return response;
         }
     }
 }

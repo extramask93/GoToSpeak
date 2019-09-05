@@ -23,7 +23,7 @@ namespace GoToSpeak.Data
         {
             var user = _context.Users.FirstOrDefault();
             if(!_context.Logs.Any()) {
-                Log log = new Log { UserId = user.Id,Timestamp = DateTime.Now, Message="User A has been blocked due to too many login attempts", Level=3};
+                Log log = new Log {Timestamp = DateTime.Now, Message="User A has been blocked due to too many login attempts", Level=3};
                 _context.Logs.Add(log);
                 _context.SaveChanges();
             }

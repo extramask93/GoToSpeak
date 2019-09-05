@@ -6,6 +6,7 @@ using GoToSpeak.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace GoToSpeak.Data
 {
@@ -45,11 +46,7 @@ namespace GoToSpeak.Data
             .HasOne(u => u.Recipient)
             .WithMany(u => u.MessagesReceived)
             .OnDelete(DeleteBehavior.Restrict);
-            
-            builder.Entity<Log>()
-            .HasOne(l => l.User)
-            .WithMany(u => u.Logs)
-            .OnDelete(DeleteBehavior.Cascade);
+        
         }
     }
 }

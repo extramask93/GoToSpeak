@@ -35,7 +35,7 @@ namespace GoToSpeak.Data
                 }
             }
         }
-
+        
         public IEnumerable<string> GetConnections(T key)
         {
             HashSet<string> connections;

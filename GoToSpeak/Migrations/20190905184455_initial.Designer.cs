@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GoToSpeak.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20190831095401_initial")]
+    [Migration("20190905184455_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,11 +29,7 @@ namespace GoToSpeak.Migrations
 
                     b.Property<DateTime>("Timestamp");
 
-                    b.Property<int>("UserId");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Logs");
                 });
@@ -248,14 +244,6 @@ namespace GoToSpeak.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
-                });
-
-            modelBuilder.Entity("GoToSpeak.Models.Log", b =>
-                {
-                    b.HasOne("GoToSpeak.Models.User", "User")
-                        .WithMany("Logs")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("GoToSpeak.Models.Message", b =>

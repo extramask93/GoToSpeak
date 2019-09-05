@@ -17,6 +17,5 @@ namespace GoToSpeak.Models
         public virtual ICollection<Message> MessagesReceived { get; set; }
         public virtual ICollection<Room> Rooms { get; set; }
         public virtual ICollection<UserRole> UserRoles { get; set;}
-        public virtual ICollection<Log> Logs { get; set; }
     }
 }

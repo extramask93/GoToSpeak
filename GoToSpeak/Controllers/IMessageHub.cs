@@ -13,5 +13,6 @@ namespace GoToSpeak.Controllers
          Task RemoveChatRoom(RoomToReturn room);
          Task NewMessage(MessageToReturnDto message);
          Task NewGlobalMessage(MessageToReturnDto message);
+         Task Kicked(MessageToReturnDto message);
     }
 }
