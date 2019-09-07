@@ -32,7 +32,7 @@ export const appRoutes: Routes = [
     {path: 'photo', component: PhotoEditorComponent, canActivate: [AuthGuard], resolve: {user: UserResolver}},
     {path: 'users', component: UsersListComponent, canActivate: [AuthGuard]},
     {path: 'members', component: MemberListComponent, canActivate: [AuthGuard],
-     resolve: {users: MemberListResolver, messages: MessagesResolver}},
+     resolve: {users: MemberListResolver}},
     {path: 'welcome', component: WelcomeComponent},
     {path: 'admin', component: AdminPanelComponent, canActivate: [AuthGuard], data: {roles: ['Admin', 'Moderator']}},
     {path: 'mfa', component: MfaSetupComponent, canActivate: [AuthGuard]},

@@ -2,6 +2,6 @@
 export interface Log {
     timestamp: Date;
     level: number;
-    user: string;
+    userId: number;
     message: string;
 }

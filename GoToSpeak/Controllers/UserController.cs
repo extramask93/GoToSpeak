@@ -21,7 +21,7 @@ namespace GoToSpeak.Controllers
             _repo = repo;
             _mapper = mapper;
         }
-        [HttpGet]
+        [HttpGet("users")]
         public async Task<IActionResult> GetUsers()
         {
             var users = await _repo.GetUsers();

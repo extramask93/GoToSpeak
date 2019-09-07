@@ -1,9 +1,10 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GoToSpeak.Migrations
 {
-    public partial class initial : Migration
+    public partial class initial2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,6 +13,7 @@ namespace GoToSpeak.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy",SqlServerValueGenerationStrategy.IdentityColumn)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(maxLength: 256, nullable: true),
@@ -27,6 +29,7 @@ namespace GoToSpeak.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy",SqlServerValueGenerationStrategy.IdentityColumn)
                         .Annotation("Sqlite:Autoincrement", true),
                     UserName = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
@@ -43,9 +46,14 @@ namespace GoToSpeak.Migrations
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
                     RefreshToken = table.Column<string>(nullable: true),
-                    LastActive = table.Column<DateTime>(nullable: false),
                     PhotoUrl = table.Column<string>(nullable: true),
-                    PhotoPublicID = table.Column<string>(nullable: true)
+                    PhotoPublicID = table.Column<string>(nullable: true),
+                    SuccessfullLoginAgent = table.Column<string>(nullable: true),
+                    SuccessfullLoginIp = table.Column<string>(nullable: true),
+                    SuccessfullLoginTimestamp = table.Column<DateTime>(nullable: true),
+                    FailedfullLoginAgent = table.Column<string>(nullable: true),
+                    FailedfullLoginIp = table.Column<string>(nullable: true),
+                    FailedfullLoginTimestamp = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -57,7 +65,9 @@ namespace GoToSpeak.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
+                    .Annotation("SqlServer:ValueGenerationStrategy",SqlServerValueGenerationStrategy.IdentityColumn)
                         .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<int>(nullable: true),
                     Level = table.Column<int>(nullable: false),
                     Timestamp = table.Column<DateTime>(nullable: false),
                     Message = table.Column<string>(nullable: true)
@@ -72,6 +82,7 @@ namespace GoToSpeak.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
+                    .Annotation("SqlServer:ValueGenerationStrategy",SqlServerValueGenerationStrategy.IdentityColumn)
                         .Annotation("Sqlite:Autoincrement", true),
                     RoleId = table.Column<int>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
@@ -93,6 +104,7 @@ namespace GoToSpeak.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
+                    .Annotation("SqlServer:ValueGenerationStrategy",SqlServerValueGenerationStrategy.IdentityColumn)
                         .Annotation("Sqlite:Autoincrement", true),
                     UserId = table.Column<int>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
@@ -178,6 +190,7 @@ namespace GoToSpeak.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
+                    .Annotation("SqlServer:ValueGenerationStrategy",SqlServerValueGenerationStrategy.IdentityColumn)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(nullable: true),
                     CreatorId = table.Column<int>(nullable: false)
@@ -198,6 +211,7 @@ namespace GoToSpeak.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
+                    .Annotation("SqlServer:ValueGenerationStrategy",SqlServerValueGenerationStrategy.IdentityColumn)
                         .Annotation("Sqlite:Autoincrement", true),
                     SenderId = table.Column<int>(nullable: false),
                     RecipientId = table.Column<int>(nullable: true),

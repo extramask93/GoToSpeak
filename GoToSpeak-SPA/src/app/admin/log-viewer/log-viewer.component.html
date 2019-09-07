@@ -30,7 +30,7 @@
               <tr *ngFor="let log of logs" [ngClass]="{'black_color': log.level==1, 'yellow_color': log.level == 2, 'red_color': log.level==3}">
                 <td >{{log.level}}</td>
                 <td >{{log.timestamp | date:'yyyy-MM-dd HH:mm:ss'}}</td>
-                <td>{{log.user}}</td>
+                <td>{{log.userId}}</td>
                 <td>{{log.message}}</td>
               </tr>
 

@@ -10,12 +10,17 @@ namespace GoToSpeak.Models
     {
     
         public string RefreshToken { get; set; }
-        public DateTime LastActive { get;set; }
         public string PhotoUrl { get; set; }
         public string PhotoPublicID {get; set;}
         public virtual ICollection<Message> MessagesSent { get; set; }
         public virtual ICollection<Message> MessagesReceived { get; set; }
         public virtual ICollection<Room> Rooms { get; set; }
         public virtual ICollection<UserRole> UserRoles { get; set;}
+        public string SuccessfullLoginAgent { get;set; }
+        public string SuccessfullLoginIp { get; set; }
+        public Nullable<DateTime> SuccessfullLoginTimestamp { get; set; }
+        public string FailedfullLoginAgent { get;set; }
+        public string FailedfullLoginIp { get; set; }
+        public Nullable<DateTime> FailedfullLoginTimestamp { get; set; }
     }
 }

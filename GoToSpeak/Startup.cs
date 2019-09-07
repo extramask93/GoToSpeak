@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -61,7 +62,6 @@ namespace GoToSpeak
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(Options=> {
                 Options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
-            services.BuildServiceProvider().GetService<DataContext>().Database.Migrate();
             services.AddAutoMapper(typeof(Startup));
             services.AddCors();
             services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
@@ -70,7 +70,8 @@ namespace GoToSpeak
             services.AddScoped<IChatRepository, ChatRepository>();	
             services.AddScoped<ILogRepository, LogRepository>();
             services.AddScoped<IDbLogger, Logger>();
-            services.AddSignalR().AddAzureSignalR("Endpoint=https://gtsp.service.signalr.net;AccessKey=Znq+2X6iU2ekZDSbDdGXfyf7KuGXdNs6p3yvEjaj5pw=;Version=1.0;");
+            services.AddSignalR();
+            //services.AddSignalR().AddAzureSignalR("Endpoint=https://gtsp.service.signalr.net;AccessKey=Znq+2X6iU2ekZDSbDdGXfyf7KuGXdNs6p3yvEjaj5pw=;Version=1.0;");
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options => {
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -151,6 +152,8 @@ namespace GoToSpeak
             services.AddScoped<IChatRepository, ChatRepository>();
             services.AddScoped<ILogRepository, LogRepository>();
             services.AddScoped<IDbLogger, Logger>();
+            services.AddHttpContextAccessor();
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddSignalR();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options => {
@@ -193,7 +196,7 @@ namespace GoToSpeak
             });
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, Seed seed)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -214,10 +217,8 @@ namespace GoToSpeak
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            app.UseHttpsRedirection();
-            seed.SeedUsers();
-            seed.SeedRooms(); 
-            seed.SeedLogs();       
+            app.UseHttpsRedirection();   
+            //app.UseDeveloperExceptionPage();    
             app.UseDefaultFiles();
             app.UseStaticFiles(); 
             app.UseCors(builder =>
@@ -227,7 +228,8 @@ namespace GoToSpeak
                             .AllowCredentials());
             app.UseAuthentication();
             if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production") {
-                app.UseAzureSignalR(routes =>{routes.MapHub<MessageHub>("/temp");});
+                app.UseSignalR(routes =>{routes.MapHub<MessageHub>("/temp");});
+                //app.UseAzureSignalR(routes =>{routes.MapHub<MessageHub>("/temp");});
             }
             else {
                 app.UseSignalR(routes =>{routes.MapHub<MessageHub>("/temp");});

@@ -24,7 +24,7 @@ export class MemberMessagesComponent implements OnInit {
     this._recipientId = val;
     this.loadMessages();
   }
-  messages: Message[];
+  messages: Message[] = [];
   user: User;
   constructor(private chatService: ChatService, private authSerive: AuthService, private alertify: AlertifyService,
               private signalRService: SignalRService, private route: ActivatedRoute) {

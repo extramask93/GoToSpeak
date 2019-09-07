@@ -15,7 +15,7 @@ export class ChatService {
 baseUrl = environment.apiUrl;
 constructor(private http: HttpClient) { }
 getUsers(): Observable<User[]> {
-  return this.http.get<User[]>(this.baseUrl + 'user');
+  return this.http.get<User[]>(this.baseUrl + 'user/users');
 }
 getUser(id): Observable<User> {
   return this.http.get<User>(this.baseUrl + 'user/' + id);

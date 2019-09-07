@@ -56,6 +56,9 @@ import { SettingsComponent } from './settings/settings.component';
 import { PhotoEditorComponent } from './settings/photo-editor/photo-editor.component';
 import { MfaRecoveryCodesComponent } from './settings/mfa-recovery-codes/mfa-recovery-codes.component';
 import { PasswordChangeComponent } from './settings/password-change/password-change.component';
+import { LoginHistoryComponent } from './settings/login-history/login-history.component';
+import { MfaDisableComponent } from './settings/mfa-disable/mfa-disable.component';
+import { MfaResetComponent } from './settings/mfa-reset/mfa-reset.component';
 
 export function tokenGetter() {
    return localStorage.getItem('token');
@@ -88,8 +91,11 @@ export function tokenGetter() {
       ResetPasswordComponent,
       SignInMfaComponent,
       SettingsComponent,
+      LoginHistoryComponent,
       MfaSetupComponent,
       MfaRecoveryCodesComponent,
+      MfaDisableComponent,
+      MfaResetComponent,
       PasswordChangeComponent,
       LogViewerComponent,
       RolesModalComponent,

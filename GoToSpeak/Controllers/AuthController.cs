@@ -25,6 +25,7 @@ using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Tokens;
 using SendGrid;
 using SendGrid.Helpers.Mail;
+using UAParser;
 
 namespace GoToSpeak.Controllers
 {
@@ -33,20 +34,24 @@ namespace GoToSpeak.Controllers
     public class AuthController : ControllerBase
     {
         private readonly ILogRepository _logRepository;
+        private readonly DataContext _context;
         private readonly IConfiguration _config;
         private readonly IMapper _mapper;
         public UserManager<User> _userManager { get; }
         public SignInManager<User> _signInManager { get; }
         private readonly IConfiguration _configuration;
         private readonly IDbLogger _logger;
+        private IHttpContextAccessor _accessor;
 
-        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, ILogRepository logRepository,
-        IConfiguration config, IMapper mapper, IConfiguration configuration, IDbLogger logger)
+        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, ILogRepository logRepository, DataContext context, 
+        IConfiguration config, IMapper mapper, IConfiguration configuration, IDbLogger logger, IHttpContextAccessor accessor)
         {
             _configuration = configuration;
             _logger = logger;
             _signInManager = signInManager;
             _logRepository = logRepository;
+            _context = context;
+            _accessor = accessor;
             _userManager = userManager;
             _config = config;
             _mapper = mapper;
@@ -69,10 +74,10 @@ namespace GoToSpeak.Controllers
             var result = await _userManager.ResetPasswordAsync(user, token, passwordForReset.Password);
             if(result.Succeeded)
             {
-                _logger.LogInfo($"Passwor has been changed for user: {user.UserName}");
+                _logger.LogInfo(user.Id,$"Passwor has been changed for user: {user.UserName}");
                 return Ok(new { message = "Password has been changed" });
             }
-            _logger.LogWarning($"Error occured during passoword reset for user: {user.UserName}");
+            _logger.LogWarning(user.Id,$"Error occured during passoword reset for user: {user.UserName}");
             return BadRequest("Something went wrong");
         }
         [AllowAnonymous]
@@ -89,10 +94,10 @@ namespace GoToSpeak.Controllers
 
             var result = SendEmail(user.Email, "Here is your reset link: " + resetLink);
             if(result.StatusCode == HttpStatusCode.Accepted) {
-                _logger.LogInfo($"Password reset link has been sent to user: {userName}");
+                _logger.LogInfo(user.Id, $"Password reset link has been sent to user: {userName}");
                 return Ok(new { message = "Reset password link has been sent to your email" });
             }
-            _logger.LogWarning($"Error occured during reset email sending process for user: {userName}");
+            _logger.LogWarning(user.Id, $"Error occured during reset email sending process for user: {userName}");
             return BadRequest("Error occured during mail sending process");
             
         }
@@ -108,10 +113,10 @@ namespace GoToSpeak.Controllers
             var result = await _userManager.ResetPasswordAsync(user, passwordForReset.Token, passwordForReset.Password);
             if (result.Succeeded)
             {
-                _logger.LogInfo($"Passwor has been changed for user: {user.UserName}");
+                _logger.LogInfo(user.Id,$"Passwor has been changed for user: {user.UserName}");
                 return Ok(new { message = "Password has been changed" });
             }
-            _logger.LogWarning($"Password reset failed for user {user.UserName}");
+            _logger.LogWarning(user.Id, $"Password reset failed for user {user.UserName}");
             return BadRequest("Reset password failed");
         }
         [AllowAnonymous]
@@ -132,6 +137,7 @@ namespace GoToSpeak.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto UserForLoginDto)
         {
+            
             var user = await _userManager.FindByNameAsync(UserForLoginDto.Username);
             if (user == null)
             {         
@@ -145,7 +151,7 @@ namespace GoToSpeak.Controllers
             var result = await _signInManager.CheckPasswordSignInAsync(user, UserForLoginDto.Password, true);
             if (result.IsLockedOut)
             {
-                _logger.LogWarning($"Temporarly blocked user: {UserForLoginDto.Username} tried to log in");
+                _logger.LogWarning(user.Id,$"Temporarly blocked user: {UserForLoginDto.Username} tried to log in");
                 return BadRequest(string.Format("Account has been locked for 5 minutes due to multiple failed login attemts"));
             } 
             if (result.Succeeded)
@@ -153,14 +159,23 @@ namespace GoToSpeak.Controllers
                 user.RefreshToken = GenerateRefreshToken();
                 var token = GenerateJwtToken(user).Result;
                 var userToReturn = _mapper.Map<UserForListDto>(user);
+                ClientInfo c = Parser.GetDefault().Parse(Convert.ToString(Request.Headers["User-Agent"][0]));        
+                user.SuccessfullLoginTimestamp =  DateTime.Now;
+                user.SuccessfullLoginIp = _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                user.SuccessfullLoginAgent = c.ToString();
                 var updateResult = await _userManager.UpdateAsync(user);
-                _logger.LogInfo($"User {user.UserName} has logged in");
-                return Ok(new { token = token, user = userToReturn, refreshToken = user.RefreshToken });
+                _logger.LogInfo(user.Id, $"User {user.UserName} has logged in");
+                return Ok(new { token = token, user = userToReturn, refreshToken = user.RefreshToken});
             }
             int accessFailedCount = await _userManager.GetAccessFailedCountAsync(user);
             int attemptsLeft = 3 -
-                        accessFailedCount;
-            _logger.LogWarning($"User: {UserForLoginDto.Username} tried to log in for the {accessFailedCount} time");
+                    accessFailedCount;
+            ClientInfo c2 = Parser.GetDefault().Parse(Convert.ToString(Request.Headers["User-Agent"][0]));        
+            user.FailedfullLoginTimestamp =  DateTime.Now;
+            user.FailedfullLoginIp = _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            user.FailedfullLoginAgent = c2.ToString();
+            await _userManager.UpdateAsync(user);
+            _logger.LogWarning(user.Id,$"User: {UserForLoginDto.Username} tried to log in for the {accessFailedCount} time");
             return BadRequest(string.Format("Username or password is incorrect, there are {0} tries left before a lockout", attemptsLeft.ToString()));
         }
         [HttpPost("login2fa")]

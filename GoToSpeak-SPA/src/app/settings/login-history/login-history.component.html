@@ -1,0 +1,16 @@
+<div class="container">
+  <h2>Logins History</h2>
+  <div>
+    <h4>Last Successfull login</h4>
+    <p>Date: <span *ngIf="this.user.successfullLoginIp">{{this.user.successfullLoginTimestamp | timeAgo}}</span></p>
+    <p>IP: {{this.user.successfullLoginIp}}</p>
+    <p>Client: {{this.user.successfullLoginAgent}}</p>
+  </div>
+  <div>
+      <h4>Last Failed login</h4>
+      <p>Date: <span *ngIf="this.user.failedfullLoginIp">{{this.user.failedfullLoginTimestamp | timeAgo}}</span></p>
+      <p>IP: {{this.user.failedfullLoginIp}}</p>
+      <p>Client: {{this.user.failedfullLoginAgent}}</p>
+  </div>
+
+</div>

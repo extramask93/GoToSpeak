@@ -9,26 +9,15 @@ namespace GoToSpeak.Data
 {
     public class Seed
     {
-        public UserManager<User> _UserManager { get; }
-        public DataContext _context { get; }
-        public RoleManager<Role> _roleManager { get; }
-
-        public Seed(UserManager<User> userManager, RoleManager<Role> RoleManager, DataContext _context)
+        public static void SeedLogs(DataContext _context)
         {
-            _roleManager = RoleManager;
-            this._context = _context;
-            _UserManager = userManager;
-        }
-        public void SeedLogs()
-        {
-            var user = _context.Users.FirstOrDefault();
             if(!_context.Logs.Any()) {
                 Log log = new Log {Timestamp = DateTime.Now, Message="User A has been blocked due to too many login attempts", Level=3};
                 _context.Logs.Add(log);
                 _context.SaveChanges();
             }
         }
-        public void SeedRooms()
+        public static void SeedRooms(DataContext _context)
         {
             if (!_context.Rooms.Any())
             {
@@ -37,7 +26,7 @@ namespace GoToSpeak.Data
                 //_context.SaveChanges();
             }
         }
-        public void SeedUsers()
+        public static void SeedUsers(DataContext _context,UserManager<User> _UserManager,RoleManager<Role> _roleManager)
         {
             if (!_UserManager.Users.Any())
             {
@@ -57,16 +46,20 @@ namespace GoToSpeak.Data
                     _UserManager.CreateAsync(user, "password").Wait();
                     _UserManager.AddToRoleAsync(user,"User").Wait();
                 }
-                var adminUser = new User
-                {
-                    UserName = "Admin",
-                    Email = "jozwiak.damian02@gmail.com",
-                    PhotoUrl = "https://res.cloudinary.com/dbxqf9dsq/image/upload/v1560411581/user_ddvo0l.png"
-                };
-                IdentityResult result = _UserManager.CreateAsync(adminUser,"password").Result;
-                if(result.Succeeded) {
-                    var admin = _UserManager.FindByNameAsync("Admin").Result;
-                    _UserManager.AddToRolesAsync(admin, new[] {"Admin", "Moderator"}).Wait();
+            }
+            else {
+                if(_UserManager.FindByNameAsync("admin").Result == null){
+                    var adminUser = new User
+                    {
+                        UserName = "Admin",
+                        Email = "jozwiak.damian02@gmail.com",
+                        PhotoUrl = "https://res.cloudinary.com/dbxqf9dsq/image/upload/v1560411581/user_ddvo0l.png"
+                    };
+                    IdentityResult result = _UserManager.CreateAsync(adminUser,"password").Result;
+                    if(result.Succeeded) {
+                        var admin = _UserManager.FindByNameAsync("Admin").Result;
+                        _UserManager.AddToRolesAsync(admin, new[] {"Admin", "Moderator"}).Wait();
+                    }
                 }
             }
         }

@@ -11,6 +11,10 @@ namespace GoToSpeak.Helpers
         void LogWarning(string message);
         void LogError(string message);
         void Log(int level, string message);
+        void LogInfo(int id, string message);
+        void LogWarning(int id,string message);
+        void LogError(int id, string message);
+        void Log(int id, int level, string message);
     }
     public class Logger : IDbLogger
     {
@@ -28,12 +32,33 @@ namespace GoToSpeak.Helpers
     public void LogWarning(string message) {
         Log(2,message);
     }
+    public void LogError(int id, string message) {
+        Log(id,3, message);
+    }
+    public void LogInfo(int id, string message) {
+        Log(id, 1, message);
+    }
+    public void LogWarning(int id, string message) {
+        Log(id, 2,message);
+    }
+    public void Log(int id, int level, string message) {
+        Log eventLog = new Log 
+        { 
+            Message = message, 
+            Level = level,
+            Timestamp = DateTime.Now,
+            UserId = id
+        }; 
+        Console.Write(message);
+        repo.Add(eventLog);
+    }
     public void Log(int level, string message) {
         Log eventLog = new Log 
         { 
             Message = message, 
             Level = level,
-            Timestamp = DateTime.UtcNow 
+            Timestamp = DateTime.Now,
+            UserId = null
         }; 
         Console.Write(message);
         repo.Add(eventLog);

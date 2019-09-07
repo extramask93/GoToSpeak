@@ -15,20 +15,8 @@ namespace GoToSpeak.Data
         }
         public async Task<User> Login(string username, string password)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x=> username == x.UserName);
-            if(user == null){
-                return null;
-            }
-            else
-            {
-                /* if(!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
-                {
-                    return null;
-                }*/
-            }
-            return user;
+            return new User{};
         }
-
         private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
         {                  
             using(var hmac = new System.Security.Cryptography.HMACSHA256(passwordSalt))

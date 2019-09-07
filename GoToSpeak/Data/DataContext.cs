@@ -46,7 +46,9 @@ namespace GoToSpeak.Data
             .HasOne(u => u.Recipient)
             .WithMany(u => u.MessagesReceived)
             .OnDelete(DeleteBehavior.Restrict);
-        
+
+    
+
         }
     }
 }

@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GoToSpeak.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20190905184455_initial")]
-    partial class initial
+    [Migration("20190907055606_initial2")]
+    partial class initial2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,6 +28,8 @@ namespace GoToSpeak.Migrations
                     b.Property<string>("Message");
 
                     b.Property<DateTime>("Timestamp");
+
+                    b.Property<int?>("UserId");
 
                     b.HasKey("Id");
 
@@ -106,7 +108,11 @@ namespace GoToSpeak.Migrations
 
                     b.Property<bool>("EmailConfirmed");
 
-                    b.Property<DateTime>("LastActive");
+                    b.Property<string>("FailedfullLoginAgent");
+
+                    b.Property<string>("FailedfullLoginIp");
+
+                    b.Property<DateTime?>("FailedfullLoginTimestamp");
 
                     b.Property<bool>("LockoutEnabled");
 
@@ -131,6 +137,12 @@ namespace GoToSpeak.Migrations
                     b.Property<string>("RefreshToken");
 
                     b.Property<string>("SecurityStamp");
+
+                    b.Property<string>("SuccessfullLoginAgent");
+
+                    b.Property<string>("SuccessfullLoginIp");
+
+                    b.Property<DateTime?>("SuccessfullLoginTimestamp");
 
                     b.Property<bool>("TwoFactorEnabled");
 
