@@ -29,7 +29,7 @@ export class SignInComponent implements OnInit {
         this.info = error;
       }
     },
-    () => {this.router.navigate(['/members']); }
+    () => {this.router.navigate(['/users']); }
     );
   }
 }

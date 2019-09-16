@@ -20,6 +20,8 @@ import { MfaSetupComponent } from './settings/mfa-setup/mfa-setup.component';
 import { SettingsComponent } from './settings/settings.component';
 import { PhotoEditorComponent } from './settings/photo-editor/photo-editor.component';
 import { MfaRecoveryCodesComponent } from './settings/mfa-recovery-codes/mfa-recovery-codes.component';
+import { LogsResolver } from './_resolvers/logs.resolver';
+import { UsersWithRolesResolver } from './_resolvers/users-with-roles.resolver';
 
 export const appRoutes: Routes = [
     {path: '', component: HomeComponent},
@@ -34,7 +36,8 @@ export const appRoutes: Routes = [
     {path: 'members', component: MemberListComponent, canActivate: [AuthGuard],
      resolve: {users: MemberListResolver}},
     {path: 'welcome', component: WelcomeComponent},
-    {path: 'admin', component: AdminPanelComponent, canActivate: [AuthGuard], data: {roles: ['Admin', 'Moderator']}},
+    {path: 'admin', component: AdminPanelComponent, canActivate: [AuthGuard], data: {roles: ['Admin']},
+     resolve: {logs: LogsResolver, users: UsersWithRolesResolver}},
     {path: 'mfa', component: MfaSetupComponent, canActivate: [AuthGuard]},
     {path: 'mfacodes', component: MfaRecoveryCodesComponent, canActivate: [AuthGuard]},
     {path: 'settings', component: SettingsComponent, canActivate: [AuthGuard]},

@@ -10,6 +10,7 @@ using GoToSpeak.Models;
 using AutoMapper;
 using System.Collections.Generic;
 using System;
+using GoToSpeak.Helpers;
 
 namespace GoToSpeak.Controllers
 {
@@ -20,47 +21,41 @@ namespace GoToSpeak.Controllers
         public DataContext _context { get; set; }
         public UserManager<User> _userManager { get; set; }
         private readonly IMapper _mapper;
-        public AdminController(DataContext context, UserManager<User> userManager, IMapper mapper)
+        private readonly ILogRepository _logRepository;
+        private readonly IRolesRepository _rolesRepository;
+
+        public AdminController(DataContext context, UserManager<User> userManager, IMapper mapper
+        , ILogRepository logRepository, IRolesRepository rolesRepository)
         {
+            _rolesRepository = rolesRepository;
             _userManager = userManager;
             _context = context;
             _mapper = mapper;
-
+            _logRepository = logRepository;
         }
         [Authorize(Policy = "RequireAdminRole")]
         [HttpGet("usersWithRoles")]
-        public async Task<IActionResult> GetUsersWithRoles()
+        public async Task<IActionResult> GetUsersWithRoles([FromQuery]UserParams userParams)
         {
-            var userList = await _context.Users
-            .OrderBy(x => x.UserName)
-            .Select(user => new
-             {
-                Id = user.Id,
-                UserName = user.UserName,
-                Roles = (from userRole in user.UserRoles
-                        join role in _context.Roles
-                        on userRole.RoleId
-                        equals role.Id
-                        select role.Name).ToList()
-            }
-            ).ToListAsync();
-            return Ok(userList);
+            var users = await _rolesRepository.GetUsersWithRoles(userParams);      
+            Response.AddPagination(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
+            return Ok(users);
         }
         [Authorize(Policy = "RequireAdminRole")]
         [HttpPost("editRoles/{userName}")]
         public async Task<IActionResult> EditRoles(string userName, RoleEditDto roleEditDto)
         {
             var user = await _userManager.FindByNameAsync(userName);
-            var userRoles= await _userManager.GetRolesAsync(user);
+            var userRoles = await _userManager.GetRolesAsync(user);
             var selectedRoles = roleEditDto.RoleNames;
-            selectedRoles = selectedRoles ?? new string[] {};
+            selectedRoles = selectedRoles ?? new string[] { };
             var result = await _userManager.AddToRolesAsync(user, selectedRoles.Except(userRoles));
-            if(!result.Succeeded) 
+            if (!result.Succeeded)
             {
                 return BadRequest("Failed to add to roles");
             }
-            result = await _userManager.RemoveFromRolesAsync(user,userRoles.Except(selectedRoles));
-            if(!result.Succeeded)
+            result = await _userManager.RemoveFromRolesAsync(user, userRoles.Except(selectedRoles));
+            if (!result.Succeeded)
             {
                 return BadRequest("Failed to remove the roles");
             }
@@ -68,19 +63,12 @@ namespace GoToSpeak.Controllers
         }
         [Authorize(Policy = "RequireAdminRole")]
         [HttpGet("logs")]
-        public IActionResult GetLogs([FromQuery]FilterDto filters) {
+        public async Task<IActionResult> GetLogs([FromQuery]LogParams logParams)
+        {
 
-            Func<IQueryable<Log>,FilterDto, List<Log>> filterData = (logz, filterz) => {
-                var filteredLogz = logz.Where((log) => log.Level >= filterz.Level);;
-                if(filterz.MinDate != filterz.MaxDate)
-                    filteredLogz = filteredLogz.Where((log) => log.Timestamp >= filterz.MinDate && log.Timestamp <= filterz.MaxDate);
-                return filteredLogz.ToList();
-            };
-
-            var logs = _context.Logs;
-            var filteredLogs = filterData(logs,filters);
-            var logsToReturn = _mapper.Map<IEnumerable<LogToReturnDto>>(filteredLogs);
-            return Ok(logsToReturn);
+            var logs = await _logRepository.GetLogs(logParams);
+            Response.AddPagination(logs.CurrentPage, logs.PageSize, logs.TotalCount, logs.TotalPages);
+            return Ok(logs);
         }
     }
 }

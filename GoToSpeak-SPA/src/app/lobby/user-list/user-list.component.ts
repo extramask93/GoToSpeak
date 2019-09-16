@@ -23,7 +23,7 @@ export class UserListComponent implements OnInit{
      { console.log('log from user list' + room.name);
        this.signalrService.getUsers(room.name).then((users: User[]) => this.users = users); });
     this.route.data.subscribe(data => {this.users = data.users; });
-
+    this.signalrService.connectionEstablished.subscribe(() => {this.refresh(); });
     }
 
   ngOnInit() {

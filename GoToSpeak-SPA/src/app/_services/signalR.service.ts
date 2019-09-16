@@ -27,9 +27,12 @@ export class SignalRService {
   baseUrl = environment.sigRUrl;
 
   constructor(private alertify: AlertifyService) {
+
+  }
+  public init(): void {
     this.createConnection();
-    this.registerOnServerEvents();
     this.startConnection();
+    this.registerOnServerEvents();
   }
   private createConnection() {
     this.hubConnection = new signalR.HubConnectionBuilder()
@@ -73,26 +76,22 @@ export class SignalRService {
       this.alertify.error(data);
     });
   }
-  private startConnection(): void {
-    this.hubConnection
-      .start()
-      .then(() => {
-        this.connectionIsEstablished = true;
-        console.log('Hub connection started');
-        this.connectionEstablished.emit(true);
-      })
-      .catch(err => {
+  private startConnection() {
+    this.hubConnection.start().then(() => {this.connectionIsEstablished = true; this.connectionEstablished.emit(true);
+                                           console.log('Hub connection started');
+        }).catch((error) => {
         console.log('Error while establishing connection, retrying...');
+        this.connectionIsEstablished = false;
         setTimeout(this.startConnection, 5000);
-      });
+    });
   }
   public sendGlobalMessage(message: any) {
-    this.hubConnection.invoke('SendGlobalMessage', message);
+      this.hubConnection.invoke('SendGlobalMessage', message);
   }
-  public sendMessage(message: any): void {
+  public sendMessage(message: any) {
     this.hubConnection.invoke('SendMessage', message);
   }
-  public getRooms() {
+  public  getRooms() {
     return this.hubConnection.invoke('GetRooms').then((rooms: Room[]) => rooms);
   }
   public joinRoom(roomName: string) {

@@ -21,10 +21,9 @@ export class ListResolver implements Resolve<User[]> {
                 private router: Router, private alertify: AlertifyService) {}
 
     resolve(route: ActivatedRouteSnapshot): Observable<User[]> {
-        if(this.signalrService.connectionIsEstablished) {
+
 
         return from(this.signalrService.getUsers(this.roomService.currentRoom.name));
-        }
-        return of(null);
+    
     }
 }

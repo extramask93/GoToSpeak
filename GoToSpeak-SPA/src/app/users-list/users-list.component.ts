@@ -12,13 +12,15 @@ export class UsersListComponent implements OnInit {
   messages: Message[] = [];
   newMessage: any = {};
   constructor(private signalRService: SignalRService, private authService: AuthService) {
+
+   }
+
+  ngOnInit() {
+    this.signalRService.init();
     this.signalRService.globalMessageReceived.subscribe((message: Message) => {
       console.log(message);
       this.messages.push(message);
     });
-   }
-
-  ngOnInit() {
   }
   sendMessage() {
     this.signalRService.sendGlobalMessage(this.newMessage);

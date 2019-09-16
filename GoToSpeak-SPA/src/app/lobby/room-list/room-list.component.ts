@@ -24,9 +24,10 @@ export class RoomListComponent implements OnInit {
       if (item.name === room.name) {this.rooms.splice(index, 1); }
     }); }, error => this.alertifyService.error(error) );
     this.route.data.subscribe(data => {this.rooms = data.rooms; });
+    this.signalr.connectionEstablished.subscribe(() => {this.signalr.getRooms().then((rooms: Room[]) => this.rooms = rooms); });
    }
   ngOnInit() {
-    }
+  }
   joinRoom(room: Room) {
     this.signalr.joinRoom(room.name).then(() =>
      { console.log('from room list' + room.name); this.roomService.roomChanged.emit(room)}, error => console.log(error));

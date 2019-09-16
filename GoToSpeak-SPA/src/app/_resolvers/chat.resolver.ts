@@ -21,9 +21,7 @@ export class ChatResolver implements Resolve<Message[]> {
 
     resolve(route: ActivatedRouteSnapshot): Observable<Message[]> {
         console.log('running resolver');
-        if (this.signalrService.connectionIsEstablished) {
-         return from(this.signalrService.getMessageHistory(this.roomService.currentRoom.name));
-        }
-        return of(null);
+        return from(this.signalrService.getMessageHistory(this.roomService.currentRoom.name));
+        //return of(null);
     }
 }

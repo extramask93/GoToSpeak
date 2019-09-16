@@ -11,7 +11,7 @@ import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
 import { ErrorInterceptorProvider } from './_services/error.interceptor';
 import { AlertifyService } from './_services/alertify.service';
-import { BsDropdownModule, ModalModule, TabsModule, BsDatepickerModule } from 'ngx-bootstrap';
+import { BsDropdownModule, ModalModule, TabsModule, BsDatepickerModule, PaginationModule } from 'ngx-bootstrap';
 import { RouterModule } from '@angular/router';
 import { appRoutes } from './routes';
 import { AuthGuard } from './_guards/auth.guard';
@@ -59,6 +59,8 @@ import { PasswordChangeComponent } from './settings/password-change/password-cha
 import { LoginHistoryComponent } from './settings/login-history/login-history.component';
 import { MfaDisableComponent } from './settings/mfa-disable/mfa-disable.component';
 import { MfaResetComponent } from './settings/mfa-reset/mfa-reset.component';
+import { LogsResolver } from './_resolvers/logs.resolver';
+import { UsersWithRolesResolver } from './_resolvers/users-with-roles.resolver';
 
 export function tokenGetter() {
    return localStorage.getItem('token');
@@ -106,6 +108,7 @@ export function tokenGetter() {
       ModalModule.forRoot(),
       TabsModule.forRoot(),
       BsDatepickerModule.forRoot(),
+      PaginationModule.forRoot(),
       AppRoutingModule,
       HttpClientModule,
       FormsModule,
@@ -138,6 +141,8 @@ export function tokenGetter() {
       RoomResolver,
       ListResolver,
       ChatResolver,
+      LogsResolver,
+      UsersWithRolesResolver,
       AdminService
    ],
    bootstrap: [

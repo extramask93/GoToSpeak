@@ -37,5 +37,12 @@
           </tbody>
       </table>
   </div>
-
+</div>
+<div class="mt-4 d-flex justify-content-center">
+  <pagination [boundaryLinks]="true" [totalItems]="this.pagination.totalItems"
+  [itemsPerPage]="this.pagination.itemsPerPage"
+  [(ngModel)]="this.pagination.currentPage"
+  (pageChanged)="this.pageChanged($event)"
+  previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+  </pagination>
 </div>

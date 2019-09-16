@@ -20,9 +20,6 @@ export class RoomResolver implements Resolve<Room[]> {
                 private router: Router, private alertify: AlertifyService) {}
 
     resolve(route: ActivatedRouteSnapshot): Observable<Room[]> {
-        if (this.signalrService.connectionIsEstablished) {
         return from(this.signalrService.getRooms());
-        }
-        return of(null);
     }
 }

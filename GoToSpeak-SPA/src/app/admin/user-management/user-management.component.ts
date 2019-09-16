@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { User } from 'src/app/_models/user';
 import { AdminService } from 'src/app/_services/admin.service';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 import { RolesModalComponent } from '../roles-modal/roles-modal.component';
+import { Pagination, PaginatedResult } from 'src/app/_models/pagination';
+import { AlertifyService } from 'src/app/_services/alertify.service';
 
 @Component({
   selector: 'app-user-management',
@@ -10,18 +12,26 @@ import { RolesModalComponent } from '../roles-modal/roles-modal.component';
   styleUrls: ['./user-management.component.css']
 })
 export class UserManagementComponent implements OnInit {
-  users: User[];
   bsModalRef: BsModalRef;
-  constructor(private adminService: AdminService, private modalService: BsModalService) { }
+  @Input()
+  pagination: Pagination;
+  @Input()
+  users: User[];
+
+  constructor(private adminService: AdminService, private modalService: BsModalService, private alertifyService: AlertifyService) { }
 
   ngOnInit() {
     this.getUsersWithRoles();
   }
+  pageChanged(event: any): void {
+    console.log(event);
+    this.pagination.currentPage = event.page;
+    this.getUsersWithRoles();
+  }
   getUsersWithRoles() {
-    this.adminService.getUsersWithRoles().subscribe((users: User[]) => {
-      console.log(users);
-      this.users = users;
-    }, error => {console.log(error); });
+    this.adminService.getUsersWithRoles(this.pagination.currentPage, this.pagination.itemsPerPage)
+    .subscribe((res: PaginatedResult<User[]>) => {this.users = res.result; this.pagination = res.pagination;},
+    error => this.alertifyService.error(error));
   }
   editRolesModal(user: User) {
     const initialState = {
