@@ -12,25 +12,23 @@ import { AlertifyService } from 'src/app/_services/alertify.service';
   styleUrls: ['./log-viewer.component.css']
 })
 export class LogViewerComponent implements OnInit {
-  
-  minDate = new Date();
-  bsRangeValue: Date[];
-  maxDate = new Date();
-  nameFilter = '';
-  level = '1';
+  levelList = [{value: 1, display: 'Level 1'}, {value: 2, display: 'Level 2'}, {value: 3, display: 'Level 3'}];
+  logParams: any = {};
   @Input()
   logs: Log[];
   @Input()
   pagination: Pagination;
   constructor(private adminService: AdminService, private alertifyService: AlertifyService) {
-    this.maxDate.setDate(this.maxDate.getDate() + 7);
-    this.bsRangeValue = [this.minDate, this.maxDate];
    }
 
   ngOnInit() {
+    this.resetFilters();
   }
-  applyFilters() {
-
+  resetFilters() {
+    this.logParams.lastXDays = 0;
+    this.logParams.userName = '';
+    this.logParams.level = 0;
+    this.loadLogs();
   }
   pageChanged(event: any): void {
     console.log(event);
@@ -38,8 +36,9 @@ export class LogViewerComponent implements OnInit {
     this.loadLogs();
   }
   loadLogs(): void {
-    this.adminService.getLogs(this.pagination.currentPage, this.pagination.itemsPerPage)
-    .subscribe((res: PaginatedResult<Log[]>) => {this.logs = res.result; this.pagination = res.pagination;},
+    console.log(this.logParams);
+    this.adminService.getLogs(this.pagination.currentPage, this.pagination.itemsPerPage, this.logParams)
+    .subscribe((res: PaginatedResult<Log[]>) => {this.logs = res.result; this.pagination = res.pagination; },
     error => this.alertifyService.error(error));
   }
 

@@ -31,12 +31,17 @@ getUsersWithRoles(page?, itemsPerPage?): Observable<PaginatedResult<User[]>> {
     })
   );
 }
-getLogs(page?, itemsPerPage?): Observable<PaginatedResult<Log[]>> {
+getLogs(page?, itemsPerPage?, logParams?): Observable<PaginatedResult<Log[]>> {
   const paginatedResult: PaginatedResult<Log[]> = new PaginatedResult<Log[]>();
   let params = new HttpParams();
   if (page != null && itemsPerPage != null) {
     params = params.append('pageNumber', page);
     params = params.append('pageSize', itemsPerPage);
+  }
+  if(logParams != null) {
+    params = params.append('name', logParams.userName);
+    params = params.append('level', logParams.level);
+    params = params.append('lastXDays', logParams.lastXDays);
   }
   return this.http.get<Log[]>(this.baseUrl + 'admin/logs', {observe: 'response', params})
   .pipe(
