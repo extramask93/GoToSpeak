@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using GoToSpeak.Data;
 using GoToSpeak.Dtos;
+using GoToSpeak.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,9 +23,11 @@ namespace GoToSpeak.Controllers
             _mapper = mapper;
         }
         [HttpGet("users")]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetUsers([FromQuery]UserParams userParams)
         {
-            var users = await _repo.GetUsers();
+            ////////////////////////////////
+            var users = await _repo.GetUsers(userParams);       
+            Response.AddPagination(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
             var usersToReturn = _mapper.Map<IEnumerable<UserForListDto>>(users);
             return Ok(usersToReturn);
         }

@@ -12,6 +12,7 @@ import { RegisterComponent } from './register/register.component';
 import { ErrorInterceptorProvider } from './_services/error.interceptor';
 import { AlertifyService } from './_services/alertify.service';
 import { BsDropdownModule, ModalModule, TabsModule, BsDatepickerModule, PaginationModule } from 'ngx-bootstrap';
+import { NgxInfiniteScrollerModule } from 'ngx-infinite-scroller';
 import { RouterModule } from '@angular/router';
 import { appRoutes } from './routes';
 import { AuthGuard } from './_guards/auth.guard';
@@ -124,7 +125,8 @@ export function tokenGetter() {
       BsDropdownModule.forRoot(),
       RouterModule.forRoot(appRoutes),
       FileUploadModule,
-      NgbModule
+      NgbModule,
+      NgxInfiniteScrollerModule,
    ],
    providers: [
       AuthService,

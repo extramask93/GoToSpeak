@@ -9,6 +9,7 @@ import { User } from '../_models/user';
 
 @Injectable()
 export class UserResolver implements Resolve<User> {
+
     constructor(private authService: AuthService,
                 private chatService: ChatService, private router: Router, private alertify: AlertifyService) {}
 

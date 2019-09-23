@@ -35,7 +35,7 @@ namespace GoToSpeak.Data
             return await _context.Messages.FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        public async Task<PagedList<Message>> GetMessagesForUser(MessageParams messageParams)
+        /*public async Task<PagedList<Message>> GetMessagesForUser(MessageParams messageParams)
         {
             var messages = _context.Messages.Include(u => u.Sender).Include(u => u.Recipient).AsQueryable();
             switch(messageParams.MessageContainer)
@@ -52,14 +52,16 @@ namespace GoToSpeak.Data
             }
             messages = messages.OrderByDescending(d => d.MessageSent);
             return await PagedList<Message>.CreateAsync(messages,messageParams.PageNumber, messageParams.PageSize);
-        }
+        }*/
 
-        public async Task<IEnumerable<Message>> GetMessageThread(int userId, int recipientId)
+        public async Task<PagedList<Message>> GetMessageThread(int userId, int recipientId,MessageParams messageParams)
         {
-            var messages = await _context.Messages.Include(u => u.Sender).Include(u => u.Recipient)
+            var messages = _context.Messages.Include(u => u.Sender).Include(u => u.Recipient)
             .Where(m => m.RecipientId == userId && m.RecipientDeleted == false && m.SenderId == recipientId || m.RecipientId == recipientId && m.SenderId == userId && m.SenderDeleted==false)
-             .OrderBy(m => m.MessageSent).ToListAsync();
-             return messages;
+             .OrderByDescending(m => m.MessageSent).AsQueryable();
+             var list = await PagedList<Message>.CreateAsync(messages,messageParams.PageNumber, messageParams.PageSize);
+             list.Reverse();
+             return list;
         }
 
         public async Task<User> GetUser(int id)
@@ -68,10 +70,11 @@ namespace GoToSpeak.Data
             return user;
         }
 
-        public async Task<IEnumerable<User>> GetUsers()
+        public async Task<PagedList<User>> GetUsers(UserParams userParams)
         {
-            var users = await _context.Users.ToListAsync();
-            return users;
+            var users =  _context.Users.AsQueryable();
+            var list = await PagedList<User>.CreateAsync(users,userParams.PageNumber, userParams.PageSize);
+            return list;    
         }
 
         public async Task<bool> SaveAll()
