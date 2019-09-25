@@ -9,8 +9,15 @@ namespace GoToSpeak.Helpers
         public AutoMapperProfiles()
         {
             CreateMap<User, UserForListDto>();
+            CreateMap<Log,LogToReturnDto>();
             CreateMap<MessageForCreationDto,Message>().ReverseMap();
             CreateMap<Message, MessageToReturnDto>();
+            CreateMap<MessageForCreationDto, MessageToReturnDto>();
+            CreateMap<User,PhotoForCreationDto>();
+            CreateMap<User,PhotoToReturnDto>();
+            CreateMap<Room, RoomToReturn>();
+            CreateMap<RoomToReturn, Room>();
+            CreateMap<UserForRegisterDto, User>();
         }
     }
 }

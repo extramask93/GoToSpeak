@@ -1,6 +1,8 @@
 export interface User {
     id: number;
-    username: string;
+    userName: string;
     lastActive: Date;
     photoUrl: string;
+    isNewMessage: boolean;
+    roles?: string[];
 }

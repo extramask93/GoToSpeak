@@ -1,0 +1,15 @@
+<div class="container">
+    <div class="row contact ml-2">
+        <h5>Chat Rooms</h5>
+    </div>
+    <div class="row form-group ml-2">
+            <input type="text" class="col-sm-8 form-control" required name="roomName" [(ngModel)]="this.newRoomName" placeholder="Room Name">
+            <a class="col-sm-2 ml-2 btn btn-primary" (click)="this.createRoom()">Add</a>
+    </div>
+    <div class="rooms">
+            <div class="scrollable full-height">
+                    <div *ngFor="let room of rooms" >
+                    <app-room-card class="" [room]="room" (roomSelectedEvent)="joinRoom($event)" (roomDeletedEvent)="deleteRoom($event)"></app-room-card>
+                    </div>
+            </div>
+</div>

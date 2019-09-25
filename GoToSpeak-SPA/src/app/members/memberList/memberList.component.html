@@ -1,10 +1,18 @@
-<div class="container row">
-  <div class="col-sm">
+<div class="row mr-2 ml-2">
+  <div class="scrollable col-sm-4">
     <div *ngFor="let user of users" >
       <app-member-card class="" [user]="user" (userSelectedEvent)="handleChange($event)"></app-member-card>
     </div>
+    <div class="mt-4 d-flex justify-content-center">
+      <pagination [boundaryLinks]="true" [totalItems]="this.paginationUsers.totalItems"
+      [itemsPerPage]="this.paginationUsers.itemsPerPage"
+      [(ngModel)]="this.paginationUsers.currentPage"
+      (pageChanged)="this.pageChanged($event)"
+      previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+      </pagination>
+    </div>
   </div>
-  <div class="col-sm">
+  <div  class="col-sm-8">
       <app-member-messages [recipientId]="this.recipientId"></app-member-messages>
   </div>
 </div>

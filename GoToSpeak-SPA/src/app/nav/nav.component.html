@@ -5,24 +5,39 @@
     <a class="navbar-brand" routerLinkActive="active" [routerLink]="[ '/home' ]">GoToSpeak</a>
     <ul *ngIf="loggedIn()" class="navbar-nav mr-auto">
       <li class="nav-item" routerLinkActive="active">
-        <a class="nav-link" [routerLink]="[ '/contacts' ]">Contacts</a>
+        <a class="nav-link" [routerLink]="[ '/users' ]">Global Chat</a>
       </li>
       <li class="nav-item" routerLinkActive="active">
-        <a class="nav-link" [routerLink]="[ '/messages' ]">Chat</a>
+          <a class="nav-link" [routerLink]="[ '/members' ]">Private Chat</a>
       </li>
       <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link" [routerLink]="[ '/members' ]">Members</a>
+        <a class="nav-link" [routerLink]="[ '/lobby' ]">Lobby</a>
+      </li>
+      <li class="nav-item" routerLinkActive="active">
+          <a class="nav-link" [routerLink]="[ '/settings' ]">Settings</a>
         </li>
+      <li *appHasRole="['Admin', 'Moderator']" class="nav-item" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="[ '/admin' ]">Admin</a>
+      </li>
     </ul>
     <div *ngIf="loggedIn()" class="dropdown" dropdown>
+      <span class="mr-2">
+        <img src = "{{photoUrl}}"  alt="">
+      </span>
       <a class="dropdown-toggle text-light" dropdownToggle>
         Welcome {{this.authService.decodedToken.unique_name | titlecase}}
       </a>
     
       <div class="dropdown-menu mt-3" *dropdownMenu >
-        <a class="dropdown-item" href="#"><i class="fa fa-user"></i>Chat</a>
+        <a class="dropdown-item" [routerLink]="[ '/photo' ]"><i class="fa fa-user mr-2"></i>Profile</a>
+          <div class="dropdown-divider"></div>
+        <a class="dropdown-item" [routerLink]="[ '/members' ]"><i class="fa fa-comments mr-2"></i>Private Chat</a>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" (click)="logOut()"><i class="fa fa-sign-out"></i>Logout</a>
+        <a class="dropdown-item" [routerLink]="[ '/settings' ]"><i class="fa fa-lock mr-2"></i>Settings</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" [routerLink]="[ '/admin' ]"><i class="fa fa-user-secret mr-2"></i>Admin Panel</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" (click)="logOut()"><i class="fa fa-sign-out mr-2"></i>Logout</a>
       </div>
     </div>
 

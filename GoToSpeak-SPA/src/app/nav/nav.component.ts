@@ -10,10 +10,12 @@ import { Router } from '@angular/router';
 })
 export class NavComponent implements OnInit {
   model: any = {};
+  photoUrl: string;
   constructor(public authService: AuthService, private alertify: AlertifyService,
               private router: Router) { }
 
   ngOnInit() {
+    this.authService.currentPhotoUrl.subscribe(photoUrl => this.photoUrl = photoUrl);
   }
   login() {
     console.log(this.model);
@@ -21,17 +23,24 @@ export class NavComponent implements OnInit {
       this.alertify.success('logged in successfully');
     },
     error => {
-      this.alertify.error('error');
+      if(error.includes('factor')) {
+        this.router.navigate(['/signin2fa']);
+      } else {
+        this.router.navigate(['/signin']);
+      }
+      this.alertify.error(error);
     },
-    () => {this.router.navigate(['/messages']);}
+    () => {this.router.navigate(['/users']); }
     );
-    console.log(this.authService.decodedToken.unique_name);
   }
   loggedIn() {
     return this.authService.loggedIn();
   }
-  logOut(){
+  logOut() {
+    localStorage.removeItem('user');
     localStorage.removeItem('token');
+    this.authService.decodedToken = null;
+    this.authService.currentUser = null;
     this.alertify.message('logged out');
     this.router.navigate(['/home']);
   }

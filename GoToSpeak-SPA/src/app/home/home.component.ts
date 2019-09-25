@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 
 
 @Component({
@@ -8,27 +9,20 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  registerMode =  true;
-  users: any;
-  constructor( private http: HttpClient) { }
-
-  ngOnInit() {
-    this.getUsers();
+  registerMode =  false;
+  ngOnInit(): void {
   }
+  constructor( private http: HttpClient, private activatedRoute: ActivatedRoute) {
+    this.activatedRoute.url.subscribe(url => {
+      this.registerMode = false;
+ });
+  }
+
   registerToggle() {
     this.registerMode = true;
   }
-  getUsers() {
-    this.http.get('http://localhost:5000/api/values').subscribe(response => {
-      this.users = response;
-    },
-    error => {
-      console.log(error);
-    }
-     );
-  }
+
   cancelRegisterMode(registeMode: boolean) {
-    console.log('event receieved');
     this.registerMode = registeMode;
   }
 

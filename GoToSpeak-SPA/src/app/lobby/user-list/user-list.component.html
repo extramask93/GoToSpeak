@@ -1,0 +1,10 @@
+<div class="container">
+    <div class="row contact ml-2">
+        <h5>Online users:</h5>
+    </div>
+    <div class="scrollable full-height">
+      <div *ngFor="let user of users" >
+        <app-user-card class="" [user]="user"></app-user-card>
+      </div>
+    </div>
+</div>

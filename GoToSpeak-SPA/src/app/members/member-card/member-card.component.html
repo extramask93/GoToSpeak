@@ -1,11 +1,13 @@
-<div class="row mt-2">
-    <div class="col-sm">
-        <img src="{{user.photoUrl}}" class="card-img-top" alt="{{user.username}}">
+<div class="row mt-2 contact">
+    <div class="col-sm mb-2">
+        <img src="{{user.photoUrl}}" class="card-img-top rounded-circle" alt="{{user.userName}}">
     </div>
     <div class="col-sm">
-        <h5 class="card-title">{{user.userName}}</h5>
+        <h5 class="text-center center">{{user.userName}}</h5>
     </div>
-    <div class="col-sm">
+    <div class="col-sm dd text-center">
+        <a class="mr-2 btn btn-primary"><i class="fa fa-user-times"></i></a>
         <a (click)="this.userSelectedEvent.emit(user.id)" class="btn btn-primary"><i class="fa fa-comments"></i></a>
+
     </div>
   </div>

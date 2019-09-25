@@ -9,21 +9,24 @@ using GoToSpeak.Helpers;
 using GoToSpeak.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace GoToSpeak.Controllers
 {
-    [Authorize]
     [Route("api/users/{userId}/[controller]")]
     [ApiController]
     public class MessagesController : ControllerBase
     {
         private readonly IChatRepository _repo;
         private readonly IMapper _mapper;
+        private readonly IHubContext<MessageHub> _hub;
 
-        public MessagesController(IChatRepository repo, IMapper mapper)
+        public MessagesController(IChatRepository repo, IMapper mapper,
+                                IHubContext<MessageHub> hub)
         {
             _repo = repo;
             _mapper = mapper;
+            _hub = hub;
         }
         [HttpGet("{id}", Name = "GetMessage")]
         public async Task<IActionResult> GetMessage(int userId, int id)
@@ -36,7 +39,7 @@ namespace GoToSpeak.Controllers
             return Ok(messageFromRepo);
         }
 
-        [HttpGet]
+        /*[HttpGet]
         public async Task<IActionResult> GetMessagesForUser(int userId, [FromQuery]MessageParams messageParams)
         {
             if(userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
@@ -46,13 +49,15 @@ namespace GoToSpeak.Controllers
             var messages = _mapper.Map<IEnumerable<MessageToReturnDto>>(messagesFromRepo);
             Response.AddPagination(messagesFromRepo.CurrentPage, messagesFromRepo.PageSize, messagesFromRepo.TotalCount, messagesFromRepo.TotalPages);
             return Ok(messages);
-        }
+        }*/
         [HttpGet("thread/{recipientId}")]
-        public async Task<IActionResult> GetMessageThread(int userId, int recipientId)
+        public async Task<IActionResult> GetMessageThread(int userId, int recipientId,[FromQuery]MessageParams messageParams)
         {
+            
             if(userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-                return Unauthorized();
-            var messageFromRepo = await _repo.GetMessageThread(userId, recipientId);
+                return Unauthorized();     
+            var messageFromRepo = await _repo.GetMessageThread(userId, recipientId,messageParams);          
+            Response.AddPagination(messageFromRepo.CurrentPage, messageFromRepo.PageSize, messageFromRepo.TotalCount, messageFromRepo.TotalPages);
             var messageThread = _mapper.Map<IEnumerable<MessageToReturnDto>>(messageFromRepo);
             return Ok(messageThread);
             

@@ -1,0 +1,49 @@
+<div class="text-center mt-3">
+  <h2>{{pagination.totalItems}} logs found</h2>
+</div>
+<form class="form-inline" #form="ngForm" (ngSubmit)="loadLogs()" novalidate>
+    <div class="form-group px-2">
+        <label for="level">Level: </label>
+        <select class="form-control ml-1" [(ngModel)]="logParams.level"  style="width: 130px" id="level" name="level">
+          <option *ngFor="let level of levelList" [value]="level.value">{{level.display}}</option>
+        </select>
+      </div>
+  <div class="form-group">
+    <label for="lastDays">Last days</label>
+    <input type="number" [(ngModel)]="logParams.lastXDays" class="form-control ml-1" style="width: 70px" id="lastDays" name="lastDays">
+  </div>
+
+  <div class="form-group px-2">
+    <label for="name">Name</label>
+    <input type="text" [(ngModel)]="logParams.userName" class="form-control ml-1" style="width: 140px" id="name" name="name">
+  </div>
+  <button type="submit" class="btn btn-primary" style="margin-left:10px">Apply Filters</button>
+  <button type="button" class="btn btn-info" (click)="resetFilters()" style="margin-left:10px">Reset Filter</button>
+
+</form>
+<br>
+
+<div id="constrainer2">
+    <table  cellpadding="0" cellspacing="0" width="100%" class="scrollTable">
+        <thead class="fixedHeader">
+          <th>Level</th><th>Date</th><th>User</th><th>Content</th>
+        </thead>
+        <tbody class="scrollContent">
+            <tr *ngFor="let log of logs" [ngClass]="{'black_color': log.level==1, 'yellow_color': log.level == 2, 'red_color': log.level==3}">
+              <td >{{log.level}}</td>
+              <td >{{log.timestamp | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+              <td>{{log.userId}}</td>
+              <td>{{log.message}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="mt-4 d-flex justify-content-center">
+  <pagination [boundaryLinks]="true" [totalItems]="this.pagination.totalItems"
+  [itemsPerPage]="this.pagination.itemsPerPage"
+  [(ngModel)]="this.pagination.currentPage"
+  (pageChanged)="this.pageChanged($event)"
+  previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+  </pagination>
+</div>

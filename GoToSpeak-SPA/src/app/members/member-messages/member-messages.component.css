@@ -1,13 +1,15 @@
 .card {
     border:none;
+    height: 90vh;
 }
 .chat {
     list-style: none;
     margin: 0;
     padding: 0;
 }
-.chat li {
+li {
     margin-bottom: 10px;
+    list-style: none;
     padding-bottom: 10px;
     border-bottom: 1px dotted #b3a9a9; 
 }
@@ -17,5 +19,12 @@
 }
 .card-body {
     overflow-y: scroll;
-     height: 400px;
+    width: 100%;
+}
+#scroller {
+    height: 90vh;
+    overflow-y: scroll;
+    padding: 0;
+    margin: 0;
+    list-style: none;
 }
