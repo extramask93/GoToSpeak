@@ -11,10 +11,10 @@ Go to addons tab and isntall:
 5.2. *c# extensions
 5.3. *NuGet Package Manager,
 6. restore nuget dependecies
-Go to build in vs terminal:
+Go to terminal in vs terminal:
 6.1.->cd GoToSpeak
-6.2.->dotnet ef database update
-before first run uncomment database seeding statement->Startup.cs->seed.SeedUsers();
+6.3.->dotnet ef migrations add <jakas_nazwa>
+6.2.->dotnet ef database update,
 6.3.->dotnet watch run
 ->ctrl+c to stop server
 # Running Client Side:
