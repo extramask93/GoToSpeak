@@ -62,6 +62,7 @@ import { MfaDisableComponent } from './settings/mfa-disable/mfa-disable.componen
 import { MfaResetComponent } from './settings/mfa-reset/mfa-reset.component';
 import { LogsResolver } from './_resolvers/logs.resolver';
 import { UsersWithRolesResolver } from './_resolvers/users-with-roles.resolver';
+import { LiveButtonComponent } from './nav/live-button/live-button.component';
 
 export function tokenGetter() {
    return localStorage.getItem('token');
@@ -102,6 +103,7 @@ export function tokenGetter() {
       PasswordChangeComponent,
       LogViewerComponent,
       RolesModalComponent,
+      LiveButtonComponent
    ],
    imports: [
       BrowserModule,

@@ -16,7 +16,6 @@ export class UsersListComponent implements OnInit {
    }
 
   ngOnInit() {
-    this.signalRService.init();
     this.signalRService.globalMessageReceived.subscribe((message: Message) => {
       console.log(message);
       this.messages.push(message);

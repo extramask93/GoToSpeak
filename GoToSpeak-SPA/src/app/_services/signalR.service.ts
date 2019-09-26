@@ -27,7 +27,7 @@ export class SignalRService {
   baseUrl = environment.sigRUrl;
 
   constructor(private alertify: AlertifyService) {
-
+    this.init();
   }
   public init(): void {
     this.createConnection();
@@ -43,6 +43,7 @@ export class SignalRService {
     })
     .configureLogging(signalR.LogLevel.Debug)
     .build();
+    this.hubConnection.onclose(() => this.connectionEstablished.emit(false));
   }
   private registerOnServerEvents(): void {
     this.hubConnection.on('NewMessage', (data: any) => {

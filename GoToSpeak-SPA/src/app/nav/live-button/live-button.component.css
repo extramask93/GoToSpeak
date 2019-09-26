@@ -1,0 +1,22 @@
+.live {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+.live-circle-red {
+    height: 12px;
+    width: 12px;
+    background-color: red;
+    border-radius: 50%;
+}
+.live-circle-green {
+    height: 12px;
+    width: 12px;
+    background-color: green;
+    border-radius: 50%;
+}
+.live-text-off {
+    margin-left: 5px;
+    color: white;
+}

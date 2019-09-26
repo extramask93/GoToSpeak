@@ -1,0 +1,5 @@
+<div class="live">
+  <div *ngIf="!on" class="live-circle-red">&nbsp;</div>
+  <div *ngIf="on" class="live-circle-green">&nbsp;</div>
+  <span class="live-text-off" >{{on ? "Online":"Offline"}}</span>
+</div>
