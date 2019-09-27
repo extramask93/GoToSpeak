@@ -3,8 +3,13 @@
     <div>
       <h5>Current room: {{this.roomService.currentRoom.name}}</h5>
     </div>
-    <div class="card-body"  #scrollMe [scrollTop]="scrollMe.scrollHeight">
-      <div class="chat">
+    <ul id="scroller"
+    ngxInfiniteScroller
+    strategy="scrollingToTop"
+    (onScrollUp)="onScrollUp()"
+    #scroller
+    [scrollTop]="scroller.scrollHeight"
+    >
         <li *ngFor="let message of messages">
           <!-- to them-->
           <div *ngIf="message.senderId != this.userId">
@@ -38,8 +43,7 @@
             </div>
   
         </li>
-      </div>
-    </div>
+    </ul>
     <div class="card-footer">
       <form #messageForm="ngForm" (ngSubmit)="messageForm.valid && sendMessage()">
         <div class="input-group">

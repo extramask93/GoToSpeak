@@ -35,25 +35,6 @@ namespace GoToSpeak.Data
             return await _context.Messages.FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        /*public async Task<PagedList<Message>> GetMessagesForUser(MessageParams messageParams)
-        {
-            var messages = _context.Messages.Include(u => u.Sender).Include(u => u.Recipient).AsQueryable();
-            switch(messageParams.MessageContainer)
-            {
-                case "Inbox":
-                    messages = messages.Where(u => u.RecipientId == messageParams.UserId && u.RecipientDeleted == false);
-                    break;
-                case "Outbox":
-                    messages = messages.Where(u => u.SenderId == messageParams.UserId && u.SenderDeleted == false);
-                    break;
-                default:
-                    messages = messages.Where(u => u.RecipientId == messageParams.UserId && u.IsRead == false && u.RecipientDeleted == false);
-                    break;
-            }
-            messages = messages.OrderByDescending(d => d.MessageSent);
-            return await PagedList<Message>.CreateAsync(messages,messageParams.PageNumber, messageParams.PageSize);
-        }*/
-
         public async Task<PagedList<Message>> GetMessageThread(int userId, int recipientId,MessageParams messageParams)
         {
             var messages = _context.Messages.Include(u => u.Sender).Include(u => u.Recipient)
@@ -82,10 +63,22 @@ namespace GoToSpeak.Data
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<IEnumerable<Room>> GetRooms()
+        public async Task<PagedList<Room>> GetRooms(RoomParams param)
         {
-            var rooms = await _context.Rooms.ToListAsync();
-            return rooms;
+            var rooms = _context.Rooms.AsQueryable();
+            var list = await PagedList<Room>
+            .CreateAsync(rooms,param.PageNumber, param.PageSize);
+            return list;
         }
+        public async Task<PagedList<Message>> GetRoomHistory(string roomName,MessageParams param)
+        {
+            var messages = _context.Messages.Include(u => u.Sender).Where(m => m.ToRoom.Name == roomName)
+             .OrderByDescending(m => m.MessageSent).AsQueryable();
+             var list = await PagedList<Message>.CreateAsync(messages,param.PageNumber, param.PageSize);
+             list.Reverse();
+             return list;
+        }
+
+
     }
 }

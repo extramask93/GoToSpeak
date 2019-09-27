@@ -14,7 +14,8 @@ namespace GoToSpeak.Data
 
         Task<User> GetUser(int id);
         Task<PagedList<User>> GetUsers(UserParams userParams);
-        Task<IEnumerable<Room>> GetRooms();
+        Task<PagedList<Room>> GetRooms(RoomParams param);
+        Task<PagedList<Message>> GetRoomHistory(string roomName, MessageParams param);
         Task<Message> GetMessage(int id);
         //Task<PagedList<Message>> GetMessagesForUser(MessageParams messageParams);
         Task<PagedList<Message>> GetMessageThread(int userId, int recipientId, MessageParams messageParams);

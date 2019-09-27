@@ -217,7 +217,7 @@ namespace GoToSpeak.Controllers
         {
             return _Connections.Where(u => u.CurrentRoom == roomName).ToList();
         }
-        public async Task<IEnumerable<RoomToReturn>> GetRooms()
+        /*public async Task<IEnumerable<RoomToReturn>> GetRooms()
         {
             // First run?
             if (_Rooms.Count == 0)
@@ -230,7 +230,7 @@ namespace GoToSpeak.Controllers
                 }
             }
             return _Rooms.ToList();
-        }
+        }*/
         public void Join(string roomName)
         {
             try

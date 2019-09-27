@@ -6,6 +6,7 @@ import { Message } from '../_models/message';
 import { PaginatedResult } from '../_models/pagination';
 import { Observable } from 'rxjs';
 import { User } from '../_models/user';
+import { Room } from '../_models/room';
 
 
 @Injectable({
@@ -62,6 +63,42 @@ getMessageThread(id: number, recipientId: number, page?, itemsPerPage?): Observa
     params = params.append('pageSize', itemsPerPage);
   }
   return this.http.get<Message[]>(this.baseUrl + 'users/' + id + '/messages/thread/' + recipientId, {observe: 'response', params})
+  .pipe(
+    map(response => {
+      paginatedResult.result = response.body;
+      if (response.headers.get('Pagination') != null) {
+        paginatedResult.pagination = JSON.parse(response.headers.get('Pagination'));
+      }
+      return paginatedResult;
+    })
+  );
+}
+getRoomHistory(name: string, page?, itemsPerPage?): Observable<PaginatedResult<Message[]>> {
+  const paginatedResult: PaginatedResult<Message[]> = new PaginatedResult<Message[]>();
+  let params = new HttpParams();
+  if (page != null && itemsPerPage != null) {
+    params = params.append('pageNumber', page);
+    params = params.append('pageSize', itemsPerPage);
+  }
+  return this.http.get<Message[]>(this.baseUrl + 'room/history/' + name, {observe: 'response', params})
+  .pipe(
+    map(response => {
+      paginatedResult.result = response.body;
+      if (response.headers.get('Pagination') != null) {
+        paginatedResult.pagination = JSON.parse(response.headers.get('Pagination'));
+      }
+      return paginatedResult;
+    })
+  );
+}
+getRooms(page?, itemsPerPage?): Observable<PaginatedResult<Room[]>> {
+  const paginatedResult: PaginatedResult<Room[]> = new PaginatedResult<Room[]>();
+  let params = new HttpParams();
+  if (page != null && itemsPerPage != null) {
+    params = params.append('pageNumber', page);
+    params = params.append('pageSize', itemsPerPage);
+  }
+  return this.http.get<Room[]>(this.baseUrl + 'room/rooms/', {observe: 'response', params})
   .pipe(
     map(response => {
       paginatedResult.result = response.body;
