@@ -19,6 +19,7 @@
   </div>
   <button type="submit" class="btn btn-primary" style="margin-left:10px">Apply Filters</button>
   <button type="button" class="btn btn-info" (click)="resetFilters()" style="margin-left:10px">Reset Filter</button>
+  <button type="button" class="btn btn-danger" (click)="clearLogs()" style="margin-left:10px">Clear Logs</button>
 
 </form>
 <br>
@@ -31,7 +32,7 @@
         <tbody class="scrollContent">
             <tr *ngFor="let log of logs" [ngClass]="{'black_color': log.level==1, 'yellow_color': log.level == 2, 'red_color': log.level==3}">
               <td >{{log.level}}</td>
-              <td >{{log.timestamp | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+              <td >{{log.timestamp | utcPipe |  date:'yyyy-MM-dd HH:mm:ss'}}</td>
               <td>{{log.userId}}</td>
               <td>{{log.message}}</td>
             </tr>

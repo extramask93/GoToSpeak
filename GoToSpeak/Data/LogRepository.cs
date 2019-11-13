@@ -25,6 +25,12 @@ namespace GoToSpeak.Data
             await context.SaveChangesAsync();
         }
 
+        public async void ClearLogs()
+        {
+            context.Logs.RemoveRange(context.Logs);
+            await context.SaveChangesAsync();
+        }
+
         public async Task<PagedList<Log>> GetLogs(LogParams logParams)
         {
             var logs  = context.Logs.AsQueryable();

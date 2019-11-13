@@ -17,7 +17,6 @@ constructor(private http: HttpClient) { }
 
 
 getMfaState(): Observable<MfaState> {
-  console.log('dupa');
   return this.http.get<MfaState>(this.baseUrl + 'manage/twofactorauth');
 }
 disableMfa() {

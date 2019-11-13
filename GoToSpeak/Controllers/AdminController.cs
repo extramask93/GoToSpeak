@@ -70,5 +70,14 @@ namespace GoToSpeak.Controllers
             Response.AddPagination(logs.CurrentPage, logs.PageSize, logs.TotalCount, logs.TotalPages);
             return Ok(logs);
         }
+        [Authorize(Policy = "RequireAdminRole")]
+        [HttpPost("clearlogs")]
+        public async Task<IActionResult> ClearLogs([FromQuery]LogParams logParams)
+        {
+            _logRepository.ClearLogs();
+            var logs = await _logRepository.GetLogs(logParams);
+            Response.AddPagination(logs.CurrentPage, logs.PageSize, logs.TotalCount, logs.TotalPages);
+            return Ok(logs);
+        }
     }
 }

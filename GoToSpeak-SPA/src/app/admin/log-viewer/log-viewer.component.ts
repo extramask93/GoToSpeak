@@ -5,6 +5,7 @@ import { HttpParams } from '@angular/common/http';
 import { max } from 'rxjs/operators';
 import { Pagination, PaginatedResult } from 'src/app/_models/pagination';
 import { AlertifyService } from 'src/app/_services/alertify.service';
+import { UtcPipePipe } from 'src/app/_pipes/utcPipe.pipe';
 
 @Component({
   selector: 'app-log-viewer',
@@ -41,5 +42,13 @@ export class LogViewerComponent implements OnInit {
     .subscribe((res: PaginatedResult<Log[]>) => {this.logs = res.result; this.pagination = res.pagination; },
     error => this.alertifyService.error(error));
   }
+  clearLogs(): void {
+    this.adminService.clearLogs().subscribe(() => {
+      this.loadLogs();
+    }, error => {
+      console.log(error);
+    });
+  }
+
 
 }
