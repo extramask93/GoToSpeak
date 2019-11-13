@@ -12,4 +12,13 @@
                     <app-room-card class="" [room]="room" (roomSelectedEvent)="joinRoom($event)" (roomDeletedEvent)="deleteRoom($event)"></app-room-card>
                     </div>
             </div>
+            <div class="mt-4 d-flex justify-content-center">
+                        <pagination [boundaryLinks]="true" [totalItems]="this.paginationRooms.totalItems"
+                        [itemsPerPage]="this.paginationRooms.itemsPerPage"
+                        [(ngModel)]="this.paginationRooms.currentPage"
+                        (pageChanged)="this.pageChanged($event)"
+                        previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+                        </pagination>
+                </div>
+        </div>
 </div>

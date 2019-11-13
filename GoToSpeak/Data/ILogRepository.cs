@@ -9,6 +9,7 @@ namespace GoToSpeak.Data
    public interface ILogRepository
     {
         void Add<T>(T entity) where T: class;
+        void ClearLogs();
         Task<PagedList<Log>> GetLogs(LogParams logParams);
     }
 }

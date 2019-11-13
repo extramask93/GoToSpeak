@@ -63,6 +63,8 @@ import { MfaResetComponent } from './settings/mfa-reset/mfa-reset.component';
 import { LogsResolver } from './_resolvers/logs.resolver';
 import { UsersWithRolesResolver } from './_resolvers/users-with-roles.resolver';
 import { LiveButtonComponent } from './nav/live-button/live-button.component';
+import { UtcPipePipe } from './_pipes/utcPipe.pipe';
+import { UtcStringPipePipe } from './_pipes/utcStringPipe.pipe';
 
 export function tokenGetter() {
    return localStorage.getItem('token');
@@ -103,7 +105,9 @@ export function tokenGetter() {
       PasswordChangeComponent,
       LogViewerComponent,
       RolesModalComponent,
-      LiveButtonComponent
+      LiveButtonComponent,
+      UtcPipePipe,
+      UtcStringPipePipe
    ],
    imports: [
       BrowserModule,

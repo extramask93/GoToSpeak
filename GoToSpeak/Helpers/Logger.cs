@@ -46,7 +46,7 @@ namespace GoToSpeak.Helpers
         { 
             Message = message, 
             Level = level,
-            Timestamp = DateTime.Now,
+            Timestamp = DateTime.UtcNow,
             UserId = id
         }; 
         Console.Write(message);

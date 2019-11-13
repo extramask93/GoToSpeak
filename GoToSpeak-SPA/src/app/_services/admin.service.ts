@@ -57,4 +57,7 @@ getLogs(page?, itemsPerPage?, logParams?): Observable<PaginatedResult<Log[]>> {
 updateUserRoles(user: User, roles: {}) {
   return this.http.post(this.baseUrl + 'admin/editRoles/' + user.userName, roles);
 }
+clearLogs() {
+  return this.http.post(this.baseUrl + 'admin/clearlogs/', {});
+}
 }

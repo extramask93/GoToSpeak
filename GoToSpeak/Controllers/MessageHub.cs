@@ -108,7 +108,7 @@ namespace GoToSpeak.Controllers
                 }
                 else {
                 // Create and save message in database
-                    Message msg = new Message()
+                    var msg = new Message()
                     {
                         Content = Regex.Replace(message, @"(?i)<(?!img|a|/a|/img).*?>", String.Empty),
                         MessageSent = DateTime.Now,
@@ -117,8 +117,9 @@ namespace GoToSpeak.Controllers
                     };
                     context.Messages.Add(msg);
                     context.SaveChanges();
+                    var messageToSend = context.Messages.Include(u => u.Sender).Single((ms) => ms.Id == msg.Id);
                     // Broadcast the message
-                    var messageViewModel = mapper.Map<MessageToReturnDto>(msg);
+                    var messageViewModel = mapper.Map<MessageToReturnDto>(messageToSend);
                     Clients.Group(roomName).NewMessage(messageViewModel);
                 }
             }
@@ -217,7 +218,7 @@ namespace GoToSpeak.Controllers
         {
             return _Connections.Where(u => u.CurrentRoom == roomName).ToList();
         }
-        public async Task<IEnumerable<RoomToReturn>> GetRooms()
+        /*public async Task<IEnumerable<RoomToReturn>> GetRooms()
         {
             // First run?
             if (_Rooms.Count == 0)
@@ -230,7 +231,7 @@ namespace GoToSpeak.Controllers
                 }
             }
             return _Rooms.ToList();
-        }
+        }*/
         public void Join(string roomName)
         {
             try
@@ -293,7 +294,8 @@ namespace GoToSpeak.Controllers
             context.Messages.Add(message);
             if (context.SaveChanges() > 0)
             {
-                var messageToReturn = mapper.Map<MessageToReturnDto>(message);
+                var ms = context.Messages.Include(u => u.Sender).Single((mg) => mg.Id == message.Id);
+                var messageToReturn = mapper.Map<MessageToReturnDto>(ms);
                 foreach (var connection in connections)
                 {
                     await Clients.Client(connection).NewMessage(messageToReturn);

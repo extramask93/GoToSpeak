@@ -160,7 +160,7 @@ namespace GoToSpeak.Controllers
                 var token = GenerateJwtToken(user).Result;
                 var userToReturn = _mapper.Map<UserForListDto>(user);
                 ClientInfo c = Parser.GetDefault().Parse(Convert.ToString(Request.Headers["User-Agent"][0]));        
-                user.SuccessfullLoginTimestamp =  DateTime.Now;
+                user.SuccessfullLoginTimestamp =  DateTime.UtcNow;
                 user.SuccessfullLoginIp = _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
                 user.SuccessfullLoginAgent = c.ToString();
                 var updateResult = await _userManager.UpdateAsync(user);
@@ -171,7 +171,7 @@ namespace GoToSpeak.Controllers
             int attemptsLeft = 3 -
                     accessFailedCount;
             ClientInfo c2 = Parser.GetDefault().Parse(Convert.ToString(Request.Headers["User-Agent"][0]));        
-            user.FailedfullLoginTimestamp =  DateTime.Now;
+            user.FailedfullLoginTimestamp =  DateTime.UtcNow;
             user.FailedfullLoginIp = _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
             user.FailedfullLoginAgent = c2.ToString();
             await _userManager.UpdateAsync(user);
@@ -323,7 +323,8 @@ namespace GoToSpeak.Controllers
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(1),
+                Expires = DateTime.Now.AddMinutes(10),
+                NotBefore = DateTime.UtcNow,
                 SigningCredentials = creds
             };
             var tokenHandler = new JwtSecurityTokenHandler();

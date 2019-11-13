@@ -15,11 +15,18 @@ import { RoomServiceService } from '../_services/room-service.service';
 @Injectable()
 export class RoomResolver implements Resolve<Room[]> {
     rooms: Room[];
+    pageNumber = 1;
+    pageSize = 5;
     constructor(private signalrService: SignalRService,
+                private chatService: ChatService,
                 private roomService: RoomServiceService,
                 private router: Router, private alertify: AlertifyService) {}
 
     resolve(route: ActivatedRouteSnapshot): Observable<Room[]> {
-        return from(this.signalrService.getRooms());
+        return this.chatService.getRooms(this.pageNumber, this.pageSize).pipe(catchError(() => {
+            this.alertify.error('Problem retrieving data');
+            this.router.navigate(['/home']);
+            return of(null);
+        }));
     }
 }
