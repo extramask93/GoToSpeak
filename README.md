@@ -7,12 +7,12 @@ Project is divided into 2 separate projects: server side in c# "GoToSpeak" and c
 3. git checkout identity
 4. cd GoToSpeak
 5. code .
-Go to addons tab and isntall:
+6. Go to addons tab and isntall:
   * C# for visual studio code
   * c# extensions
   * NuGet Package Manager,
-6. restore nuget dependecies
-7. Go to terminal in vs terminal:
+7. restore nuget dependecies
+8. Go to terminal in vs terminal:
 * *cd GoToSpeak*
 * *dotnet ef migrations add <some_name>*
 * *dotnet ef database update*,
