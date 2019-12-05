@@ -31,7 +31,7 @@ namespace GoToSpeak
                     context.Database.Migrate();
                     Seed.SeedUsers(context, userManager,roleManager);
                     Seed.SeedRooms(context);
-                    Seed.SeedLogs(context);
+                    //Seed.SeedLogs(context);
                 }
                 catch(Exception ex) {
                     var logger = services.GetRequiredService<ILogger<Program>>();

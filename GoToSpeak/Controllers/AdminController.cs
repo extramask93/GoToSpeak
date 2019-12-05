@@ -11,6 +11,7 @@ using AutoMapper;
 using System.Collections.Generic;
 using System;
 using GoToSpeak.Helpers;
+using System.Net.Http;
 
 namespace GoToSpeak.Controllers
 {
@@ -72,12 +73,15 @@ namespace GoToSpeak.Controllers
         }
         [Authorize(Policy = "RequireAdminRole")]
         [HttpPost("clearlogs")]
-        public async Task<IActionResult> ClearLogs([FromQuery]LogParams logParams)
+        public IActionResult ClearLogs(HttpRequestMessage request)
         {
+            try {
             _logRepository.ClearLogs();
-            var logs = await _logRepository.GetLogs(logParams);
-            Response.AddPagination(logs.CurrentPage, logs.PageSize, logs.TotalCount, logs.TotalPages);
-            return Ok(logs);
+            }
+            catch(Exception e) {
+                return BadRequest(e.ToString());
+            }
+            return Ok(new {message = "done"});
         }
     }
 }

@@ -27,7 +27,10 @@ namespace GoToSpeak.Data
 
         public async void ClearLogs()
         {
-            context.Logs.RemoveRange(context.Logs);
+            var logs = context.Logs.ToList();
+            foreach(var log in logs) {
+            context.Logs.Remove(log);
+            }
             await context.SaveChangesAsync();
         }
 
