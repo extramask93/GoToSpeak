@@ -14,6 +14,7 @@ namespace GoToSpeak.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy",SqlServerValueGenerationStrategy.IdentityColumn)
+                        .Annotation("MySql:ValueGenerationStrategy",MySqlValueGenerationStrategy.IdentityColumn)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(maxLength: 256, nullable: true),
@@ -30,6 +31,7 @@ namespace GoToSpeak.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy",SqlServerValueGenerationStrategy.IdentityColumn)
+                        .Annotation("MySql:ValueGenerationStrategy",MySqlValueGenerationStrategy.IdentityColumn)                      
                         .Annotation("Sqlite:Autoincrement", true),
                     UserName = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
@@ -66,7 +68,8 @@ namespace GoToSpeak.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                     .Annotation("SqlServer:ValueGenerationStrategy",SqlServerValueGenerationStrategy.IdentityColumn)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    .Annotation("MySql:ValueGenerationStrategy",MySqlValueGenerationStrategy.IdentityColumn)
+                    .Annotation("Sqlite:Autoincrement", true),
                     UserId = table.Column<int>(nullable: true),
                     Level = table.Column<int>(nullable: false),
                     Timestamp = table.Column<DateTime>(nullable: false),
@@ -83,6 +86,7 @@ namespace GoToSpeak.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                     .Annotation("SqlServer:ValueGenerationStrategy",SqlServerValueGenerationStrategy.IdentityColumn)
+                                            .Annotation("MySql:ValueGenerationStrategy",MySqlValueGenerationStrategy.IdentityColumn)
                         .Annotation("Sqlite:Autoincrement", true),
                     RoleId = table.Column<int>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
@@ -105,6 +109,8 @@ namespace GoToSpeak.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                     .Annotation("SqlServer:ValueGenerationStrategy",SqlServerValueGenerationStrategy.IdentityColumn)
+                                               .Annotation("MySql:ValueGenerationStrategy",MySqlValueGenerationStrategy.IdentityColumn)
+
                         .Annotation("Sqlite:Autoincrement", true),
                     UserId = table.Column<int>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
@@ -191,6 +197,8 @@ namespace GoToSpeak.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                     .Annotation("SqlServer:ValueGenerationStrategy",SqlServerValueGenerationStrategy.IdentityColumn)
+                                            .Annotation("MySql:ValueGenerationStrategy",MySqlValueGenerationStrategy.IdentityColumn)
+
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(nullable: true),
                     CreatorId = table.Column<int>(nullable: false)
@@ -212,6 +220,7 @@ namespace GoToSpeak.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                     .Annotation("SqlServer:ValueGenerationStrategy",SqlServerValueGenerationStrategy.IdentityColumn)
+                                                .Annotation("MySql:ValueGenerationStrategy",MySqlValueGenerationStrategy.IdentityColumn)
                         .Annotation("Sqlite:Autoincrement", true),
                     SenderId = table.Column<int>(nullable: false),
                     RecipientId = table.Column<int>(nullable: true),
